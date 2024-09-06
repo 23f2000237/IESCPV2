@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<body>
+    <div id="app"></div>
+</body>
+<script>
+async function getData() {
+  const url = "/api/testing/cors";
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    console.log(json);
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+getData()
+</script>
