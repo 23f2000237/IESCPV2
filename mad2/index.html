@@ -1,22 +1,20 @@
 <!DOCTYPE html>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <body>
-    <div id="app"></div>
+    <div id="app">
+      
+    </div>
 </body>
 <script>
 async function getData() {
-  const url = "/api/testing/cors";
-  try {
+  const url = "http://127.0.0.1:5000/admin/name/1";
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Response status: ${response.status}`);
     }
-
-    const json = await response.json();
-    console.log(json);
-  } catch (error) {
-    console.error(error.message);
-  }
+    const data = await response.json();
+    document.getElementById("app").textContent=data.name  
+    console.log(data);
 }
 getData()
 </script>
