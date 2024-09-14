@@ -15,7 +15,10 @@ def create_app():
         sec.init_app(app,ud)
         db.create_all()
         create_data(ud)
-    create_view(app)
+    app.config['WTF_CSRF_CHECK_DEFAULT']=False
+    app.config["SECURITY_CSRF_PROTECH_MECHANISMS"]=[]
+    app.config["SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS"]=True
+    create_view(app,ud)
     return app
 
 if __name__=='__main__':

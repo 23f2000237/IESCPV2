@@ -1,10 +1,16 @@
 const Navbar={
     template:`
     <nav>
+    <h1> Connex </h1>
     <router-link to='/'>Home</router-link>
     <router-link to='/login'>Login</router-link>
     <router-link to='/signup'>Signup</router-link>
-    <router-link to='/logout'>Logout</router-link>
-    </nav>`
+    <a :href="url">Logout</a>
+    </nav>`,
+    data(){
+        return {
+            url:window.location.origin + '/logout'
+        }
+    }
 }
 export default Navbar;

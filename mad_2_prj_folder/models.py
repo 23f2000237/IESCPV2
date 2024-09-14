@@ -26,7 +26,7 @@ class UserRoles(db.Model):
 
 class Influencer(db.Model):
     __tablename__='Influencer'
-    email_id=db.Column(db.Integer, db.ForeignKey('user.email'),primary_key = True)
+    email_id=db.Column(db.String, db.ForeignKey('user.email'),primary_key = True)
     category=db.Column(db.String(80),nullable=False)
     Niche=db.Column(db.String(80),nullable=False)
     Reach=db.Column(db.Integer,nullable=False)
@@ -35,7 +35,7 @@ class Influencer(db.Model):
 
 class Sponsor(db.Model):
     __tablename__='Sponsor'
-    email_id=db.Column(db.Integer, db.ForeignKey('user.email'),primary_key = True)
+    email_id=db.Column(db.String, db.ForeignKey('user.email'),primary_key = True)
     Industry=db.Column(db.String(80),nullable=False)
     Flag=db.Column(db.String(80),nullable=False,default='True')
     Approval=db.Column(db.String(80),nullable=False,default='False')
