@@ -11,15 +11,6 @@ def create_view(app):
         cur.execute('select name from user where id=1')
         name=cur.fetchone()
         return name[0]
-    @app.route('/home')
-    @login_required
+    @app.route('/')
     def home():
-        email=current_user.email
-        role=current_user.roles
-        r_name=role[0].name
-        print(r_name)
-        nae=current_user.name
-        if r_name=='Inf':
-            return 'Ah!!! An Influencer! Welcome'+nae
-        else:
-            return 'Ah!!! A Sponsor! Welcome'+nae
+        return render_template('index.html')
