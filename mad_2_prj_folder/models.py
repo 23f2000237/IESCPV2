@@ -32,6 +32,7 @@ class Influencer(db.Model):
     Reach=db.Column(db.Integer,nullable=False)
     Balance=db.Column(db.Integer,nullable=False)
     Flag=db.Column(db.String(80),nullable=False,default='True')
+    site=db.Column(db.String(80),nullable=False)
 
 class Sponsor(db.Model):
     __tablename__='Sponsor'
@@ -39,7 +40,7 @@ class Sponsor(db.Model):
     Industry=db.Column(db.String(80),nullable=False)
     Flag=db.Column(db.String(80),nullable=False,default='True')
     Approval=db.Column(db.String(80),nullable=False,default='False')
-
+    site=db.Column(db.String(80),nullable=False)
 class Campaigns(db.Model):
     __tablename__='Campaigns'
     C_id=db.Column(db.Integer, primary_key = True)

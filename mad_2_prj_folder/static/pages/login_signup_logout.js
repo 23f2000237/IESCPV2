@@ -1,7 +1,7 @@
 import router from "../utils/router.js"
 const login={
     template:
-    `<div class="d-flex justify-content-center align-items-center vh-100">
+    `<div v-if="appr" class="d-flex justify-content-center align-items-center vh-90">
       <div class="card shadow p-4 border rounded-3 ">
         <h3 class="card-title text-center mb-4">Login</h3>
         <div class="form-group mb-3">
@@ -13,11 +13,14 @@ const login={
         <button class="btn btn-primary w-100" @click="submitInfo">Submit</button>
       </div>
     </div>
+    <div v-else>
+    <h1>Uh oh! You are not approved yet</h1>
     `,
     data(){
       return{
         email:"",
-        password:""
+        password:"",
+        appr:true
       }},
       methods:{
         async submitInfo(){
@@ -33,6 +36,7 @@ const login={
             router.push('/profile')
           }
           else{
+            this.appr=false
             console.error("Login failed")
           }
         },

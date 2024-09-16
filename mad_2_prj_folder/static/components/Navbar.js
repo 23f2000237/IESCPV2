@@ -1,11 +1,10 @@
 const Navbar={
     template:`
     <nav>
-    <h1> Connex </h1>
-    <router-link to='/'>Home</router-link>
+    <router-link to='/' style="text-decoration:none"><h1 style="color:lilac" > Connex </h1></router-link>
     <router-link to='/login'>Login</router-link>
     <router-link to='/signup'>Signup</router-link>
-    <a :href="url">Logout</a>
+    <a  href="/logout">Logout</a>
     </nav>`,
     data(){
         return {
