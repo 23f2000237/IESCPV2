@@ -48,12 +48,21 @@ def create_view(app,ud:SQLAlchemyUserDatastore):
               q="select Category,Niche,Reach,Balance,flag,site from Influencer where email='{}'".format(email)
               cur.execute(q)
               cat,nic,reach,bal,flag,site=cur.fetchone()
-              return jsonify({"email":email,"name":name,"cat":cat,"nic":nic,"reach":reach,"bal":bal,"flag":flag,"site":site,"role":role}),200
+              q2="select * from Campaigns where Niche in ('Public','{}')".format(nic)
+              cur.execute(q2)
+              camp=cur.fetchall()
+              return jsonify({"email":email,"name":name,"cat":cat,"nic":nic,"reach":reach,"bal":bal,"flag":flag,"site":site,"role":role,"camps":camp}),200
          elif role=='Spons':
               q="select Industry,Flag,site from Sponsor where email='{}'".format(email)
               cur.execute(q)
               ind,flag,site=cur.fetchone()
               return jsonify({"email":email,"name":name,"role":role,"ind":ind,"flag":flag,"site":site}),200
          else:
-              return jsonify({"text":"under construction. Admin's db should show some stats","name":"Megha","role":'Admin'})
+              q="select * from Campaigns"
+              cur.execute(q)
+              camp=cur.fetchall()
+              q="select * from Ads"
+              cur.execute(q)
+              ads=cur.fetchall()
+              return jsonify({"text":"under construction. Admin's db should show some stats","name":"Megha","role":'Admin',"camps":camp,"Ads":ads}),200
     

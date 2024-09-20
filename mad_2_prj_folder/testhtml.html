@@ -1,0 +1,17 @@
+<!--Admin Profile-->
+<div v-if="logged">
+    <div v-if="flag">
+        
+    </div>
+    <div v-else>
+        <h1>You are flagged. Please contact the admin</h1>
+    </div>
+    </div>
+    </div>
+
+<table>
+    <tr v-for="c in camps">
+        <td>{{c[0]}}</td>
+        <td>{{c[1]}}</td>
+    </tr>
+</table>

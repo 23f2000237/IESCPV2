@@ -2,6 +2,8 @@ from flask import Flask
 from views import create_view
 from extn import db,sec
 from create_initial_data import create_data
+from campaigns import api
+from ads import adpi
 def create_app():
     app=Flask(__name__)
     app.config['SECRET_KEY']="secret"
@@ -19,6 +21,9 @@ def create_app():
     app.config["SECURITY_CSRF_PROTECH_MECHANISMS"]=[]
     app.config["SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS"]=True
     create_view(app,ud)
+    api.init_app(app)
+    adpi.init_app(app)
+
     return app
 
 if __name__=='__main__':
