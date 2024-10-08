@@ -4,6 +4,8 @@ from extn import db,sec
 from create_initial_data import create_data
 from campaigns import api
 from ads import adpi
+from influencer import ipi
+from sponsor import spi
 def create_app():
     app=Flask(__name__)
     app.config['SECRET_KEY']="secret"
@@ -23,7 +25,8 @@ def create_app():
     create_view(app,ud)
     api.init_app(app)
     adpi.init_app(app)
-
+    ipi.init_app(app)
+    spi.init_app(app)
     return app
 
 if __name__=='__main__':

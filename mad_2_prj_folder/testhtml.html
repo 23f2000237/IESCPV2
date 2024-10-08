@@ -1,11 +1,12 @@
 <!--Admin Profile-->
 <div v-if="logged">
-    <div v-if="flag">
-        
-    </div>
-    <div v-else>
-        <h1>You are flagged. Please contact the admin</h1>
-    </div>
+    <div v-f="role=='Admin'">
+        <h1>Welcome {{name}}</h1>
+        <table>
+            <tr> 
+                <td>  </td>
+            </tr>
+        </table>
     </div>
     </div>
 
@@ -14,4 +15,10 @@
         <td>{{c[0]}}</td>
         <td>{{c[1]}}</td>
     </tr>
+</table>
+
+
+<table>
+
+
 </table>

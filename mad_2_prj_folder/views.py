@@ -64,5 +64,17 @@ def create_view(app,ud:SQLAlchemyUserDatastore):
               q="select * from Ads"
               cur.execute(q)
               ads=cur.fetchall()
-              return jsonify({"text":"under construction. Admin's db should show some stats","name":"Megha","role":'Admin',"camps":camp,"Ads":ads}),200
-    
+              q='select * from Sponsor'
+              cur.execute(q)
+              spons=cur.fetchall()
+              q="select * from Influencer"
+              cur.execute(q)
+              inf=cur.fetchall()
+              q='select name from user where email="{}"'.format(current_user.email)
+              cur.execute(q)
+              name=cur.fetchone()[0]
+              return jsonify({"text":"under construction. Admin's db should show some stats","name":name,"role":'Admin',"camps":camp,"Ads":ads,"spons":spons,"inf":inf}),200
+    @app.route('/inf/spons',methods=['POST','GET'])
+    @roles_required('Spons')
+    def inf_spons():
+         return '200'
