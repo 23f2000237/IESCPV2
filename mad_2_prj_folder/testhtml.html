@@ -18,7 +18,28 @@
 </table>
 
 
-<table>
-
-
+<table class='table-primary table-bordered'>
+    <caption class="caption">Campaingn</caption>
+    <tr>
+        <th scope="col">C_id</th>
+        <th scope="col">email</th>
+        <th scope="col">title</th>
+        <th scope="col">Message</th>
+        <th scope="col">S_date</th>
+        <th scope="col">E_date</th>
+        <th scope="col">Budget</th>
+        <th scope="col">Niche</th>
+        <th scope="col">Flag</th>
+        </tr>
+        <tr v-for="c in camp_info"> 
+            <td scope="row">{{c[0]}}</td>
+            <td >{{c[1]}}</td>
+            <td >{{c[2]}}</td>
+            <td>{{c[3]}}</td>
+            <td >{{c[4]}}</td>
+            <td >{{c[5]}}</td>
+            <td>{{c[6]}}</td>
+            <td>{{c[7]}}</td>
+            <td >{{c[8]}}</td>
+        </tr>
 </table>

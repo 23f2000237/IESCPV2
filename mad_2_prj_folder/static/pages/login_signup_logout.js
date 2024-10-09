@@ -15,6 +15,7 @@ const login={
     </div>
     <div v-else>
     <h1>Uh oh! You are not approved yet</h1>
+    </div>
     `,
     data(){
       return{

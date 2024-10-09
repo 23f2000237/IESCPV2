@@ -34,7 +34,6 @@ def upd(C_id,field,val):
 
 class Campaigns(Resource):
     @auth_required()
-    @marshal_with(campaign_fields)
     def get(self):
         role=current_user.roles[0].name
         if role=='Spons':
@@ -56,7 +55,7 @@ class Campaigns(Resource):
             q="select * from Campaigns"
             cur.execute(q)
             all_data=cur.fetchall()
-            return {"data":all_data},200
+            return all_data
             
     
     @auth_required()
