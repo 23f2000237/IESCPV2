@@ -1,14 +1,8 @@
 import router from "../utils/router.js"
 const admin_profile={
 template:`
-<div v-model=sp_info>
+<div>
         <h1>Welcome {{name}}</h1>
-        <table v-for="c in camps">
-        <caption>Campaigns</caption>
-            <tr> 
-                <td> {{c[0]}}  {{c[2]}}   </td>
-            </tr>
-        </table>
         <table class='table-warning table-bordered'>
         <caption>Sponsors</caption>
          <tr>
@@ -20,16 +14,11 @@ template:`
         <th scope="col">site</th>
         </tr>
             <tr v-for="s in sp_info"> 
-               <th>{{s[0]}}</th>
-               <td>{{s[1]}}</td>
-               <td>{{s[2]}}</td>
+               <th>{{s.name}}</th>
+               <td>{{s.email}}</td>
+               <td>{{s.ind}}</td>
                <td>
-               <div v-if="s[3]=='False'">
-               <div class='table-danger'> <button @click="flag(s)" class='btn-success'> Unflag {{text}} </button> </div>
-               </div>
-               <div v-else>
-               <div class='table-success'> <button @click="flag(s)" class='btn-danger'> Flag {{text}}</button> </div>
-               </div>
+             <button :class="[s.flag=='True'? 'btn-danger' :'btn-success']" @click="flag(s)"> <p v-if="s.flag=='True'">Flag</p> <p v-else> Unflag</p>    </button>
                </td>
                <td>
                <div v-if="s[4]=='False'">
@@ -39,7 +28,7 @@ template:`
                <div class='table-success'>Approved </div>
                </div>
                </td>
-               <td><button @click="visit(s[5])" class='btn-success'>Visit site </button></td>        
+               <td><button @click="visit(s.site)" class='btn-success'>Visit site </button></td>        
             </tr>
         </table>
       <table class='table-primary table-bordered'>
@@ -107,32 +96,27 @@ data (){
         inf:[],
         sp_info:[],
         inf_info:[],
-        camp_info:[]
+        camp_info:[],
+        text_f:'Unflag',
+        text_t:'flag'
     }},
     methods:
     {
         async flag(fl){
             //this is to update the details for sposnsors.
-            let upval=''//this will be used as a proxy to update
-            let ls=this.sp_info.length
-            if (fl[3]=='False'){
-                upval='True'
-                this.text=' '
-            }
-            else{
-                upval='False'
-            }
-            for(let i=0 ;i<ls;i++){
-                if (this.sp_info[i][1]==fl[1]){
-                    this.sp_info[i][3]=upval
-                }
-            }
+            console.log(fl)
+            if (fl.flag=='True'){
+                fl.flag='False'
+             }
+             else{
+                fl.flag='True'
+             }
             const url=window.location.origin
             const req= await fetch(url+'/api/spons',{
                 method:"PUT",headers: {
                     "Content-Type": "application/json",
-                  },body:JSON.stringify({"Flag":upval,"email":fl[1]})})
-
+                  },body:JSON.stringify({"Flag":fl.flag,"email":fl.email})})
+                
         },
         visit(l){
             window.open(l)

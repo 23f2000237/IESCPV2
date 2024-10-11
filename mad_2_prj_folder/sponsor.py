@@ -28,13 +28,41 @@ class Sponsor(Resource):
             q='select name,s.email_id,Industry,Flag,Approval,Site from Sponsor s,user u where s.email=u.email and u.email="{}"'.format(email)
             cur.execute(q)
             data=cur.fetchone()
+            l=[]
+            for i in data:
+                d={}
+                d['name']=i[0]
+                d['email']=i[1]
+                d['ind']=i[2]
+                d['flag']=i[3]
+                d['approval']=i[4]
+                d['site']=i[5]
+                l.append(d)     
             return jsonify({"data":data}),'200'
         elif role=='Admin':
             #admin can see every sponsor's every detail
             q='select name,s.email_id,Industry,Flag,Approval,Site from Sponsor s,user u where s.email_id=u.email'
             cur.execute(q)
             data=cur.fetchall()
-            return data
+            l=[]
+            for i in data:
+                d={}
+                d['name']=i[0]
+                d['email']=i[1]
+                d['ind']=i[2]
+                '''if i[3]=='False' or i[3]=='false':
+                    d['flag']='false'
+                elif  i[3]=='True' or i[3]=='true':
+                    d['flag']='true'
+                if i[4]=='False' or i[4]=='false':
+                    d['Approval']='false'
+                elif  i[4]=='True' or i[4]=='true':
+                    d['Approval']='true' '''
+                d['flag']=i[3]
+                d['Approval']=i[4]
+                d['site']=i[5]
+                l.append(d)
+            return l
         elif role=='Inf':
             #Influencers can see sponsors who have sponsored them past and present
             #they can also look into other sponsors who have had a good run with their friends (will do this as an optional feature)
@@ -82,6 +110,7 @@ class Sponsor(Resource):
             conn.commit()
             cur.execute(q3)
             conn.commit()
+            print(q3)
             return {"message":"updated flag and stuff succesfully"}
         return '200'
 
