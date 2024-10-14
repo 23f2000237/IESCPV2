@@ -32,6 +32,23 @@ def upd(C_id,field,val):
     cur.execute(q)
     conn.commit()
 
+def conv(data):
+    #this is a function that takes in a list we got from cur.fetchall() and returns a list of dictionaries as it is easier to acces in js
+    l=[]
+    for i in data:
+        d={}
+        d['c_id']=i[0]
+        d['s_email']=i[1]
+        d['title']=i[2]
+        d['message']=i[3]
+        d['s_date']=i[4]
+        d['e_date']=i[5]
+        d['budget']=i[6]
+        d['niche']=i[7]
+        d['flag']=i[8]
+        l.append(d)
+    return l
+
 class Campaigns(Resource):
     @auth_required()
     def get(self):
@@ -40,17 +57,20 @@ class Campaigns(Resource):
             q='select * from Campaigns where s_email="{}"'.format(current_user.email)
             cur.execute(q)
             all_data=cur.fetchall()
-            return {"data":all_data},200
+            l=conv(all_data)
+            return l
         if role=='Inf':
-            q='select * from Campaigns where (Niche="Public" or Niche in (select Niche from Influencer where I_email="{email}")) and (C_id not in (select C_id from Ads where I_email="{email}"))'.format(email=current_user.email)
+            q='select * from Campaigns where (Niche="Public" or Niche in (select Niche from Influencer where email="{email}")) and (C_id not in (select C_id from Ads where I_email="{email}"))'.format(email=current_user.email)
             #Influencers can see all campaigns they are eligible for but not part of
             cur.execute(q)
             Influ_not_partof=cur.fetchall()
+            Influ_not_partof=conv(Influ_not_partof)
             #The campaigns they are part of
-            q="select * from Campaigns where C_id in (select C_id from Ads where I_email={})".format(current_user.email)
+            q="select * from Campaigns where C_id in (select C_id from Ads where I_email='{}')".format(current_user.email)
             cur.execute(q)
             Influ_partof=cur.fetchall()
-            return{"Influ_partof":Influ_partof,"Influ_not_partof":Influ_not_partof},200
+            Influ_partof=conv(Influ_partof)
+            return{"partof":Influ_partof,"notpartof":Influ_not_partof},200
         elif role=='Admin':
             q="select * from Campaigns"
             cur.execute(q)

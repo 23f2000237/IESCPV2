@@ -25,20 +25,19 @@ class Sponsor(Resource):
         role=current_user.roles[0].name
         if role=='Spons':
             email=current_user.email
-            q='select name,s.email_id,Industry,Flag,Approval,Site from Sponsor s,user u where s.email=u.email and u.email="{}"'.format(email)
+            q='select name,s.email_id,Industry,Flag,Approval,Site from Sponsor s,user u where s.email_id=u.email and u.email="{}"'.format(email)
             cur.execute(q)
-            data=cur.fetchone()
+            i=cur.fetchone()
             l=[]
-            for i in data:
-                d={}
-                d['name']=i[0]
-                d['email']=i[1]
-                d['ind']=i[2]
-                d['flag']=i[3]
-                d['approval']=i[4]
-                d['site']=i[5]
-                l.append(d)     
-            return jsonify({"data":data}),'200'
+            d={}
+            d['name']=i[0]
+            d['email']=i[1]
+            d['ind']=i[2]
+            d['flag']=i[3]
+            d['approval']=i[4]
+            d['site']=i[5]
+            l.append(d)
+            return l
         elif role=='Admin':
             #admin can see every sponsor's every detail
             q='select name,s.email_id,Industry,Flag,Approval,Site from Sponsor s,user u where s.email_id=u.email'
@@ -70,7 +69,18 @@ class Sponsor(Resource):
             q="select name,s.email_id,Industry,Flag,Approval,site from Sponsor s,user u where s.email_id=u.email and u.email in (select s_email from Campaigns where C_id in (select C_id from Ads where I_email='{}'))".format(email)
             cur.execute(q)
             data=cur.fetchall()
-            return jsonify({"data":data}),'200'
+            #they can also see their sites
+            q="select s.email_id,name,site from Sponsor s,user u where s.email_id=u.email"
+            cur.execute(q)
+            new_data=cur.fetchall()
+            l=[]
+            for k in new_data:
+                d={}
+                d['email']=k[0]
+                d['name']=k[1]
+                d['site']=k[2]
+                l.append(d)
+            return {"data":data,"site data":l}
     
     @auth_required()
     def put(self):

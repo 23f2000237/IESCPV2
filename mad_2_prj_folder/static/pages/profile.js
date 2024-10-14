@@ -4,6 +4,12 @@ const prof={
     <div>
     This should not be visible
     </div>`,
+    data(){
+        return{
+            logged:false,
+            role:'',
+        }
+    },
     async mounted(){
         const url=window.location.origin
         const val=await fetch(url+'/profile')
@@ -16,7 +22,7 @@ const prof={
             router.push('/inf/profile')
             break;
             }
-            case 'spons':{
+            case 'Spons':{
                 router.push('/spons/profile')
                 break;
             }

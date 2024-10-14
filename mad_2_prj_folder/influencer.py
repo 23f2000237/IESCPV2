@@ -32,6 +32,7 @@ class Influencer(Resource):
         #Influencer needs to see theirs data and their friends data, deal with it afterwards
         if role=='Inf':
             email=current_user.email
+            name=current_user.name
             q='select * from Influencer where email="{}"'.format(email)
             cur.execute(q)
             info=cur.fetchone()
@@ -41,7 +42,7 @@ class Influencer(Resource):
             bal=info[4]
             flag=info[5]
             site=info[6]
-            inf_data=jsonify({"email":email,"category":cat,"Niche":nic,"Reach":reach,"Balance":bal,"Flag":flag,"site":site})
+            inf_data=jsonify({"email":email,"category":cat,"Niche":nic,"Reach":reach,"Balance":bal,"Flag":flag,"site":site,"name":name,"role":role})
             return inf_data
         elif role=='Admin':
             q1='select name,i.email,Category,Niche,Reach,Balance,Flag,site from user u,Influencer i where i.email=u.email'

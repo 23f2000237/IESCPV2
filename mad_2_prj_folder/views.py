@@ -53,7 +53,7 @@ def create_view(app,ud:SQLAlchemyUserDatastore):
               camp=cur.fetchall()
               return jsonify({"email":email,"name":name,"cat":cat,"nic":nic,"reach":reach,"bal":bal,"flag":flag,"site":site,"role":role,"camps":camp}),200
          elif role=='Spons':
-              q="select Industry,Flag,site from Sponsor where email='{}'".format(email)
+              q="select Industry,Flag,site from Sponsor where email_id='{}'".format(email)
               cur.execute(q)
               ind,flag,site=cur.fetchone()
               return jsonify({"email":email,"name":name,"role":role,"ind":ind,"flag":flag,"site":site}),200
