@@ -31,7 +31,37 @@ const spons_profile={
             </td>
         </tr>
 </table>
-<button class='btn-success' @click='cre_cam'> Create a new campaign </button>
+<div v-if="create" >
+<button class='btn-danger' @click='cre_cam'>Not now</button>
+</div>
+<div v-else>
+<button class='btn-success' @click='cre_cam'>Create new Campaign</button>
+</div>
+<div v-if="create">
+<table>
+    <tr>
+        <th scope="col">title</th>
+        <th scope="col">Message</th>
+        <th scope="col">S_date</th>
+        <th scope="col">E_date</th>
+        <th scope="col">Budget</th>
+        <th scope="col">Niche</th>
+        <th scope="col">       </th>
+        </tr>
+        <tr>
+        <td> <input type="text" placeholder='Enter your title' v-model='new_camp.title' required> </td>
+        <td> <input type="text" placeholder='Explain your campaign' v-model="new_camp.Message" required></td>
+        <td> <input type="date" v-model="new_camp.S_date" required> </td>
+        <td> <input type="date" v-model="new_camp.E_date" required> </td>
+        <td> <input type="number" v-model="new_camp.Budget" required> </td>
+        <td> <input type="text" placeholder='Enter your niche' v-model="new_camp.Niche" required> </td>
+        </tr>
+</table>
+<p v-if="new_camp.Niche.length > 1">
+You are creating a new campaign called {{new_camp.title}} starting on {{new_camp.S_date}} and ending on {{new_camp.E_date}} with a budget of &#8377{{new_camp.Budget}}
+<button class='btn-info' @click='cre'> Yes Create </button>
+</p>
+</div>
     </div>
     <div v-if='flag=="False"'>
     <p>You are flagged!!</p>
@@ -50,12 +80,39 @@ data(){
         camps:[],
         date:new Date() ,
         create:false,
+        new_camp:{
+            title:'',
+            Message:'',
+            S_date:new Date(),
+            E_date:new Date(),
+            Budget:0,
+            Niche:'',
+            Flag:'True',
+            s_email:''
+        }
     }
 },
 methods:{
     cre_cam(){
-        router.push('/cre_cam/'+this.email)
-    }
+        this.create=!this.create
+    },
+    async cre(){
+        this.new_camp.s_email=this.email
+        const url=window.location.origin
+        const val= await fetch(
+            url+'/api/camps',
+            {
+                method:'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(this.new_camp)
+            })
+        if (val.ok){
+            let info = await val.json()
+            console.log(info)
+        }   
+    } 
 },
 async mounted(){
     const url=window.location.origin
@@ -74,7 +131,6 @@ async mounted(){
    if (val_camps.ok){
     let cinfo=await val_camps.json()
     this.camps=cinfo
-    console.log(new Date(this.camps[0].e_date)<= this.date)
    }
 }
 }

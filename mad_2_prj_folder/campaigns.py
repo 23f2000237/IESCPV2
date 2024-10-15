@@ -79,7 +79,6 @@ class Campaigns(Resource):
             
     
     @auth_required()
-    @marshal_with(campaign_fields)
     def post(self):
         args=parser.parse_args()
         q="insert into Campaigns(s_email,title,Message,S_date,E_date,Budget,Niche) values('{s_email}','{title}','{Message}','{S_date}','{E_date}',{Budget},'{Niche}')".format(C_id=args.C_id,s_email=args.s_email,title=args.title,Message=args.Message,S_date=args.S_date,E_date=args.E_date,Budget=args.Budget,Niche=args.Niche,Flag=args.Flag)
