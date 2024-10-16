@@ -15,6 +15,7 @@ parser.add_argument('E_date', type=str)
 parser.add_argument('Budget', type=int)
 parser.add_argument('Niche', type=str)
 parser.add_argument('Flag', type=str)
+parser.add_argument('c_id',type=int)
 campaign_fields={
     "C_id":fields.Integer,
     "s_email":fields.String,
@@ -28,7 +29,7 @@ campaign_fields={
 }
 
 def upd(C_id,field,val):
-    q="update Campaigns set {field}='{val}' where C_id={cid}".format(field=field,val=val,cid=C_id)
+    q='update Campaigns set {field}="{val}" where C_id={cid}'.format(field=field,val=val,cid=C_id)
     cur.execute(q)
     conn.commit()
 
@@ -81,13 +82,13 @@ class Campaigns(Resource):
     @auth_required()
     def post(self):
         args=parser.parse_args()
-        q="insert into Campaigns(s_email,title,Message,S_date,E_date,Budget,Niche) values('{s_email}','{title}','{Message}','{S_date}','{E_date}',{Budget},'{Niche}')".format(C_id=args.C_id,s_email=args.s_email,title=args.title,Message=args.Message,S_date=args.S_date,E_date=args.E_date,Budget=args.Budget,Niche=args.Niche,Flag=args.Flag)
+        q='insert into Campaigns(s_email,title,Message,S_date,E_date,Budget,Niche) values("{s_email}","{title}","{Message}","{S_date}","{E_date}",{Budget},"{Niche}")'.format(C_id=args.C_id,s_email=args.s_email,title=args.title,Message=args.Message,S_date=args.S_date,E_date=args.E_date,Budget=args.Budget,Niche=args.Niche,Flag=args.Flag)
+        print(q)
         cur.execute(q)
         conn.commit()
         return {"message":"campaign_created"},200
     
     @auth_required()
-    @marshal_with(campaign_fields)
     def put(self):
         #two types of updating
         args=parser.parse_args()
@@ -95,7 +96,6 @@ class Campaigns(Resource):
         C_id=args.C_id
         if role=='Admin':
             #admin can possible only flag or unflag the campaign.
-            print(args)
             q="update Campaigns set Flag='{flag}' where C_id={cid} ".format(flag=args.Flag,cid=args.C_id)
             cur.execute(q)
             conn.commit()
@@ -111,10 +111,9 @@ class Campaigns(Resource):
         return {"message":"campaign_updated"},200
     
     @auth_required()
-    @marshal_with(campaign_fields)
     def delete(self):
         args=parser.parse_args()
-        q='delete from Campaigns where C_id={}'.format(args.C_id)
+        q='delete from Campaigns where C_id={}'.format(args.c_id)
         cur.execute(q)
         conn.commit()
         return {"message":"campaign_deleted"},200

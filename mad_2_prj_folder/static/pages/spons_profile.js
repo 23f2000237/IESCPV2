@@ -1,5 +1,10 @@
 import router from "../utils/router.js"
 import crecam from "../components/cre_cam.js"
+
+function inval_date(st){
+    !isNaN(new Date(st))
+}
+
 const spons_profile={
     template:`<div v-if="approval">
     <div v-if="flag=='True'">
@@ -25,8 +30,8 @@ const spons_profile={
             <td>{{c.niche}}</td>
             <td>
             <div>
-            <button class='btn-info'>Update</button>
-            <button class='btn-danger'>Delete</button>
+            <button class='btn-info' @click='upd(c)'>Update</button>
+            <button class='btn-danger' @click='del(c)'>Delete</button>
             </div>
             </td>
         </tr>
@@ -68,6 +73,7 @@ You are creating a new campaign called {{new_camp.title}} starting on {{new_camp
     </div>
     </div>
     <div v-else>
+    <p>You are not approved </p>
     </div>`,
 data(){
     return {
@@ -78,6 +84,7 @@ data(){
         approval:'',
         site:'',
         camps:[],
+        url:window.location.origin,
         date:new Date() ,
         create:false,
         new_camp:{
@@ -110,9 +117,50 @@ methods:{
             })
         if (val.ok){
             let info = await val.json()
-            console.log(info)
-        }   
-    } 
+        }
+        window
+    },
+    async del(c){
+      const ind=this.camps.indexOf(c)
+      if(confirm("Are you sure ?")){
+       const del_req=fetch(
+        this.url+'/api/camps',
+        {
+            method:'DELETE',
+            headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(this.camps[ind])
+        })
+        this.camps.splice(ind,1)
+      }
+    },
+    async upd(c){
+        let op={}
+        op['C_id']=c.c_id
+        op['title']=window.prompt('Are you changing your title from '+c['title']+' ? (click o', c['title'])
+        c['title']=op['title']
+        op['Message']=window.prompt('Are you changing your message from '+c['message']+' ?',c['message'])
+        c['message']=op['Message']
+        op['S_date']=window.prompt('Are you changing '+op['title']+"'s Start date from "+c['s_date']+' ?',c['s_date'])
+        c['s_date']=op['S_date']
+        op['E_date']=window.prompt('Are you changing '+op['title']+"'s End date from "+c['e_date']+' ?',c['e_date'])
+        c['e_date']=op['E_date']
+        op['Budget']=Number(window.prompt('Are you changing '+op['title']+"'s Budget from "+c['budget']+' ?',c['budget']))
+        c['budget']=op['Budget']
+        op['Niche']=window.prompt('Are you changing'+op['title']+"'s Niche from "+c['niche']+' ?',c['niche'])
+        c['niche']=op['Niche']
+        const put_req=await fetch(
+            this.url+'/api/camps',
+            {
+                method:'PUT',
+                headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(op)
+            }
+        )
+    },    
 },
 async mounted(){
     const url=window.location.origin
