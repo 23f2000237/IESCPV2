@@ -43,3 +43,40 @@
             <td >{{c[8]}}</td>
         </tr>
 </table>
+
+
+<table>
+    <tr>
+        <th>Select your Influencer</th>
+        <th>Title of the advertisment</th>
+        <th>Message to the Influencer</th>
+        <th>Name your Price</th>
+    </tr>
+    <tr>
+        <td>
+            <select v-model="this.inf_lst" class="form-control" text="Influencer"  >
+                <option v-for="val in this.inf_lst">{val.name}</option>
+              </select>
+        </td>
+        <td> <input type="text" placeholder='Enter your title' v-model='new_ad.title' required> </td>
+        <td> <input type="text" placeholder='Enter your Message' v-model='new_ad.message' required> </td>
+        <td> <input type="text" placeholder='Name your price' v-model='new_ad.Negotiated' required> </td>
+
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <th>Influencer</th>
+        <th>Title</th>
+        <th>Message</th>
+        <th>Negotiated pay</th>
+        <th>              </th>
+    </tr>
+    <tr v-for="ad in ads">
+        <td> {{ad.I_email}}</td>
+        <td> {{ad.Title}} </td>
+        <td> {{ad.Message}} </td>
+        <td> {{ad.Negotiated}}  </td>
+    </tr>
+</table>
