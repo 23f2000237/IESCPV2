@@ -80,7 +80,7 @@ class Sponsor(Resource):
                 d['name']=k[1]
                 d['site']=k[2]
                 l.append(d)
-            return {"data":data,"site data":l}
+            return {"data":data,"sitedata":l}
     
     @auth_required()
     def put(self):

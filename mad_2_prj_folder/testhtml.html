@@ -80,3 +80,26 @@
         <td> {{ad.Negotiated}}  </td>
     </tr>
 </table>
+
+
+<table v-if="camps.length>0">
+    <tr>
+        <th>Sponsor</th>
+        <th>Title</th>
+        <th>Message</th>
+        <th>Starts on</th>
+        <th>Ends on</th>
+        <th>Total Budget</th>
+        <th>Niche</th>
+    </tr>
+    <tr v-for="c in par" v-if="(c.flag=='True')">
+        <th> {{c.name}} </th>
+        <th>{{c.title}}</th>
+        <th>{{c.message}}</th>
+        <th>{{c.s_date}}</th>
+        <th>{{c.e_date}}</th>
+        <th>{{c.budget}}</th>
+        <th>{{c.niche}}</th>
+    </tr>
+</table>
+

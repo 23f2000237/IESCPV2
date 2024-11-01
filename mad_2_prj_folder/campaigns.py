@@ -47,6 +47,9 @@ def conv(data):
         d['budget']=i[6]
         d['niche']=i[7]
         d['flag']=i[8]
+        if len(i)>9:
+            d['site']=i[9]
+            d['name']=i[10]
         l.append(d)
     return l
 
@@ -61,13 +64,13 @@ class Campaigns(Resource):
             l=conv(all_data)
             return l
         if role=='Inf':
-            q='select * from Campaigns where (Niche="Public" or Niche in (select Niche from Influencer where email="{email}")) and (C_id not in (select C_id from Ads where I_email="{email}"))'.format(email=current_user.email)
+            q='select C_id,s_email,Title,Message,S_date,E_date,Budget,c.Niche,c.Flag,s.site,u.name from Campaigns c, Sponsor s,user u where (c.s_email=s.email_id and s.email_id=u.email) and ((Niche="Public" or Niche in (select Niche from Influencer where email="{email}")) and (C_id not in (select C_id from Ads where I_email="{email}")))'.format(email=current_user.email)
             #Influencers can see all campaigns they are eligible for but not part of
             cur.execute(q)
             Influ_not_partof=cur.fetchall()
             Influ_not_partof=conv(Influ_not_partof)
             #The campaigns they are part of
-            q="select * from Campaigns where C_id in (select C_id from Ads where I_email='{}')".format(current_user.email)
+            q="select C_id,s_email,Title,Message,S_date,E_date,Budget,c.Niche,c.Flag,s.site,u.name from Campaigns c, Sponsor s,user u where (c.s_email=s.email_id and s.email_id=u.email) and (C_id in (select C_id from Ads where I_email='{}' and Status='Paid'))".format(current_user.email)
             cur.execute(q)
             Influ_partof=cur.fetchall()
             Influ_partof=conv(Influ_partof)

@@ -52,7 +52,7 @@ const spons_profile={
         <td> {{ad.Negotiated}}  </td>
         <div>
         <button class='btn btn-info' @click='upad(ad)' v-if="ad.Status=='Negotiated'">Update</button>
-            <button class='btn btn-danger' @click='delad(ad)'>Delete</button>
+            <button class='btn btn-danger' @click='delad(ad)'>Reject</button>
             <button class='btn btn-warning' @click='cham(ad)'>Change Message</button>
             <button class='btn btn-info' @click='chat(ad)'>Change Title</button>
         </div>
