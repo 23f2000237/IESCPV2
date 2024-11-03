@@ -103,3 +103,27 @@
     </tr>
 </table>
 
+<div>
+    <div class="card text-bg-info mb-3" style="max-width: 18rem;"  v-for="ad in ads">
+  <div class="card-header"> {{ad.Title}} </div>
+  <div class="card-body">
+    <h5 class="card-title"> Negotiated: ₹{{ad.Negotiated}}</h5>
+    <p class="card-text"> {{ad.Message}} </p>
+    <div v-if="ad.Status!='Paid'">
+    <div class="card-text" v-if="ad.Status=='Negotiated'"> 
+    <input type="number" v-model='ad.Negotiated' required>
+    </div>
+    <div v-if="">
+    <button class="btn btn-success" @click="acc(ad)"> Accept </button>
+    <button class="btn btn-warning" @click="neg(ad)" v-if="n==true"> Negotiate </button>
+    <button class="btn btn-info" @click="conf(ad)" v-if="cf"> confirm </button>
+    <button class="btn btn-danger" @click="rej(ad)"> Reject </button>
+    </div>
+    </div>
+    <div v-else>
+    <p class="card-text"> You have accepted this Advertisment </p>
+    </div>
+  </div>
+  </div>
+  </div>
+    </div>

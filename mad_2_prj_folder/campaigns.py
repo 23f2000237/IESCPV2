@@ -64,7 +64,7 @@ class Campaigns(Resource):
             l=conv(all_data)
             return l
         if role=='Inf':
-            q='select C_id,s_email,Title,Message,S_date,E_date,Budget,c.Niche,c.Flag,s.site,u.name from Campaigns c, Sponsor s,user u where (c.s_email=s.email_id and s.email_id=u.email) and ((Niche="Public" or Niche in (select Niche from Influencer where email="{email}")) and (C_id not in (select C_id from Ads where I_email="{email}")))'.format(email=current_user.email)
+            q='select C_id,s_email,Title,Message,S_date,E_date,Budget,c.Niche,c.Flag,s.site,u.name from Campaigns c, Sponsor s,user u where (c.s_email=s.email_id and s.email_id=u.email) and ((Niche="public" or Niche in (select Niche from Influencer where email="{email}")) and (C_id not in (select C_id from Ads where I_email="{email}")))'.format(email=current_user.email)
             #Influencers can see all campaigns they are eligible for but not part of
             cur.execute(q)
             Influ_not_partof=cur.fetchall()

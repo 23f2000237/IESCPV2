@@ -52,6 +52,7 @@ const spons_profile={
         <td> {{ad.Negotiated}}  </td>
         <div>
         <button class='btn btn-info' @click='upad(ad)' v-if="ad.Status=='Negotiated'">Update</button>
+        <button class='btn btn-success' @click='acc(ad)' v-if="ad.Status=='Negotiated'">Accept</button>
             <button class='btn btn-danger' @click='delad(ad)'>Reject</button>
             <button class='btn btn-warning' @click='cham(ad)'>Change Message</button>
             <button class='btn btn-info' @click='chat(ad)'>Change Title</button>
@@ -311,6 +312,11 @@ methods:{
         else{
         ad['bud']=this.camps[ind].budget
         const put_req=await fetch(this.url+'/api/ads',{method:'PUT',headers: {"Content-Type": "application/json",},body: JSON.stringify(ad)})}
+    },
+    async acc(ad){
+        ad.Salary=ad.Negotiated
+        ad.Status='Paid'
+        const put_req=await fetch(this.url+'/api/ads',{method:'PUT',headers: {"Content-Type": "application/json",},body: JSON.stringify(ad)})
     }
 },
 async mounted(){

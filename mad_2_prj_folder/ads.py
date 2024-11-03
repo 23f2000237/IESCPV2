@@ -63,20 +63,15 @@ class ads(Resource):
             ads_of_sponsor=fn(cur.fetchall()) #all the ads of the sponsor
             return ads_of_sponsor,200
         elif role=='Inf':
-            q="select * from Ads where I_email='{}'".format(current_user.email)
+            q="select * from Ads where I_email='{}' and Flag='True'".format(current_user.email)
             cur.execute(q)
             ads=cur.fetchall()#contains the ads the influencer has been a part of
-            flagged_ads,un_flagged_ads=[],[]
-            for i in ads:
-                if i[5]=='true':
-                    un_flagged_ads.append(i)
-                else:
-                    flagged_ads.append(i)
+            ads=fn(ads)
             #for ads shown to Influencer who are not part of 
             q="select * from Ads where C_id in (select C_id from Ads where I_email<>'{email}' and C_id in (select C_id from Campaigns where Niche='Public' or Niche in (select Niche from Influencer where I_email='{email}')))".format(email=current_user.email)
             cur.execute(q)
-            ads_Influ_not_partof=cur.fetchall()
-            return {"flagged_ads":flagged_ads,"un_flagged_ads":un_flagged_ads,"ads_Influ_not_partof":ads_Influ_not_partof},200
+            ads_Influ_not_partof=fn(cur.fetchall())
+            return {"ads":ads,"ads_Influ_not_partof":ads_Influ_not_partof},200
         elif role=='Admin':
             q="select * from Ads"
             cur.execute(q)
@@ -119,15 +114,22 @@ class ads(Resource):
             #influ can change Pending to either Negotiated or Paid and only one of them will be sent to the server
             upd(args.A_id,'Status',args.Status)
             upd(args.A_id,'Negotiated',args.Negotiated)
+            if args.Status=='Paid':
+                qp="update Campaigns set Budget=Budget-{neg} where C_id={cid}".format(cid=args.C_id,neg=args.Negotiated)
+                cur.execute(q)
+                conn.commit()
         elif role=='Spons':
             #sponsor can change the Status to Pending ,Negotiated(the negotiated salary) and the Salary(once the satus is Either Negotiated or paid)
             upd(args.A_id,'Status',args.Status)
             upd(args.A_id,'Negotiated',args.Negotiated)
             if (args.Salary)!=0:
                 #print(args.salary)
-                q="update Campaigns set Budget={bud} where C_id={cid}".format(bud=args.bud,cid=args.C_id) #budget of the campaign will change only if salary is fixed
+                q="update Campaigns set Budget=Budget-{Salary} where C_id={cid}".format(Salary=args.Salary,cid=args.C_id) #budget of the campaign will change only if salary is fixed
+                q2="update Influencer set Balance={sal} where email='{em}'".format(em=args.I_email,sal=args.Salary)
                 upd(args.A_id,'Salary',args.Salary)
                 cur.execute(q)
+                conn.commit()
+                cur.execute(q2)
                 conn.commit()
             if(args.cham):
                 q="update Ads set Message='{msg}' where A_id={aid}".format(aid=args.A_id,msg=args.Message)

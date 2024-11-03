@@ -1,4 +1,4 @@
-
+import router from '../utils/router.js';
 const influ_profile={
     template:`
     <div v-if="logged">
@@ -6,7 +6,8 @@ const influ_profile={
         <div>
        <h1>Welcome {{name}} </h1>
        <h1>Total earinings this Month: ₹ {{bal}} </h1>
-       <h2>Campaigns you are part of</h2>
+       <h5>Campaigns you are part of: {{par.length}}</h5>
+       <h5> (Note, the count is the number of campaigns confirmed) </h5>
        <table v-if="par.length>0" class='table-warning table-bordered'>
     <tr>
         <th>Sponsor</th>
@@ -29,6 +30,7 @@ const influ_profile={
         <th><button class='btn btn-primary' @click='visit(c)'>Visit Sponsor's site</button></th>
     </tr>
 </table>
+<button class='btn btn-danger' @click="reqs()"> Check Requests </button>
        <h2>Other Campaigns that are going on.</h2>
        <table class='table-primary table-bordered'>
     <caption class="caption">Active Campaigns</caption>
@@ -86,10 +88,13 @@ const influ_profile={
     },
     methods:{
         flag_camp(id){
-            console.log(id)
+            console.log(id) 
         },
         async visit(c){
             window.open(c.site)
+        },
+        reqs(){
+            router.push('/reqs')
         }
     },
     async mounted(){
@@ -111,6 +116,10 @@ const influ_profile={
                 this.par=po
                 let npo=vinfo.notpartof
                 this.camps=npo
+            }
+            const val_ads=await fetch(url+'/api/ads')
+            if (val_ads.ok){
+                let ainfo=await val_ads.json()
             }
         }
     }

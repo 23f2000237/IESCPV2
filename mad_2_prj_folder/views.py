@@ -93,3 +93,9 @@ def create_view(app,ud:SQLAlchemyUserDatastore):
              d['email']=i[1]
              l.append(d)
         return l,'200'
+    @app.route('/aretheyloggedin')
+    def logged_in():
+         if current_user.is_authenticated:
+              return jsonify({"message":"yes"})
+         else:
+              return jsonify({"message":"no"})
