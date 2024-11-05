@@ -4,6 +4,7 @@ const Navbar={
     <router-link to='/' style="text-decoration:none"><h1 style="color:lilac" > Connex </h1></router-link>
     <div v-if="msg=='yes'">
     <a  href="/logout" style="position: absolute; top: 50px; right: 125px;">Logout</a>
+    <router-link to='/stats'>Stats</router-link>
     </div>
     </nav>`,
     data(){

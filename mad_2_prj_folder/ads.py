@@ -1,4 +1,5 @@
 from flask_restful import Resource,Api,fields,reqparse,marshal_with
+from flask import jsonify
 from flask_security import auth_required
 from models import Campaigns
 from extn import db
@@ -68,7 +69,7 @@ class ads(Resource):
             ads=cur.fetchall()#contains the ads the influencer has been a part of
             ads=fn(ads)
             #for ads shown to Influencer who are not part of 
-            q="select * from Ads where C_id in (select C_id from Ads where I_email<>'{email}' and C_id in (select C_id from Campaigns where Niche='Public' or Niche in (select Niche from Influencer where I_email='{email}')))".format(email=current_user.email)
+            q='select * from Ads where C_id in (select C_id from Ads where I_email<>"{email}" and C_id in (select C_id from Campaigns where Niche="Public" or Niche in (select Niche from Influencer where I_email="{email}")))'.format(email=current_user.email)
             cur.execute(q)
             ads_Influ_not_partof=fn(cur.fetchall())
             return {"ads":ads,"ads_Influ_not_partof":ads_Influ_not_partof},200
@@ -88,7 +89,7 @@ class ads(Resource):
     @auth_required()
     def post(self):
         args=parser.parse_args()
-        q="insert into Ads(C_id,I_email,title,Message,Salary,Status,Negotiated) values({cid},'{I_email}','{title}','{message}',{salary},'{status}',{neg})".format(cid=args.C_id,I_email=args.I_email,title=args.title,message=args.Message,salary=args.salary,neg=args.Negotiated,status=args.Status)
+        q='insert into Ads(C_id,I_email,title,Message,Salary,Status,Negotiated) values({cid},"{I_email}","{title}","{message}",{salary},"{status}",{neg})'.format(cid=args.C_id,I_email=args.I_email,title=args.title,message=args.Message,salary=args.salary,neg=args.Negotiated,status=args.Status)
         cur.execute(q)
         conn.commit()
         return {"Message":"Ad Added"},200
@@ -96,7 +97,16 @@ class ads(Resource):
     @auth_required()
     def delete(self):
         args=parser.parse_args()
+        if (args.Salary!=0):
+            #change the budget back and take away the influencer's salary
+            q1="update Campaigns set Budget=Budget+{sal} where C_id={cid}".format(cid=args.C_id,sal=args.Salary)
+            cur.execute(q1)
+            conn.commit()
+            q2="update Influencer set Balance=Balance-{sal} where email='{em}'".format(sal=args.Salary,em=args.I_email)
+            cur.execute(q2)
+            conn.commit()
         q="delete from Ads where A_id={}".format(args.A_id)
+        print(q)
         cur.execute(q)
         conn.commit()
         return {"Message":"Ad deleted"},200
@@ -115,8 +125,12 @@ class ads(Resource):
             upd(args.A_id,'Status',args.Status)
             upd(args.A_id,'Negotiated',args.Negotiated)
             if args.Status=='Paid':
+                upd(args.A_id,'Salary',args.Salary)
                 qp="update Campaigns set Budget=Budget-{neg} where C_id={cid}".format(cid=args.C_id,neg=args.Negotiated)
-                cur.execute(q)
+                cur.execute(qp)
+                conn.commit()
+                q2="update Influencer set Balance=Balance+{sal} where email='{em}'".format(em=args.I_email,sal=args.Salary)
+                cur.execute(q2)
                 conn.commit()
         elif role=='Spons':
             #sponsor can change the Status to Pending ,Negotiated(the negotiated salary) and the Salary(once the satus is Either Negotiated or paid)

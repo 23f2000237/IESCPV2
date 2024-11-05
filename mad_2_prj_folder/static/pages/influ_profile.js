@@ -31,6 +31,7 @@ const influ_profile={
     </tr>
 </table>
 <button class='btn btn-danger' @click="reqs()"> Check Requests </button>
+<button class='btn btn-link' @click="search()">Search for adverts </button>
        <h2>Other Campaigns that are going on.</h2>
        <table class='table-primary table-bordered'>
     <caption class="caption">Active Campaigns</caption>
@@ -53,8 +54,11 @@ const influ_profile={
             <td>{{c.niche}}</td>
             <td>
             <div>
-            <button class='btn-info' @click='visit(c)'>Visit Sponsor's site</button>
+            <button class='btn btn-info' @click='visit(c)'>Visit Sponsor's site</button>
             </div>
+            </td>
+            <td>
+            <button class='btn btn-outline-success' @click='ask(c)'>Request Advert</button>
             </td>
         </tr>
 </table>
@@ -83,7 +87,8 @@ const influ_profile={
             camps:[],
             spons:[],
             date:new Date(),
-            par:[]
+            par:[],
+            email:""
         }
     },
     methods:{
@@ -95,7 +100,37 @@ const influ_profile={
         },
         reqs(){
             router.push('/reqs')
-        }
+        },
+        async ask(c){
+            //the influencer is requesting this campaign, so this will start being with a negotiation status
+            let ad={}
+            ad.title=window.prompt('What is the title you are proposing ? ')
+            ad.Message=window.prompt('What message would you like to post to the Sponsor ?')
+            ad.Negotiated=window.prompt("What is your negotiated pay? note: The campaign's total budget is ₹"+c.budget)
+            if (ad.title==null){
+                ad.title=c.title
+            }
+            if(ad.Message==null){
+                ad.Message=c.message
+            }
+            if(ad.Negotiated==null| ad.Negotiated>=c.budget){
+                ad.Negotiated=0
+            }
+            ad.C_id=c.c_id
+            ad.I_email=this.email
+            ad.salary=0
+            ad.Status='Negotiated'
+            const url=window.location.origin
+            const val= await fetch(
+                url+'/api/ads',
+                {
+                    method:'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify(ad)
+                })
+        } 
     },
     async mounted(){
             const url=window.location.origin
@@ -108,6 +143,7 @@ const influ_profile={
                 this.bal=info.Balance
                 this.ad_text=info.text
                 this.site=info.site
+                this.email=info.email
                 }
             const val_camps=await fetch(url + '/api/camps')
             if (val_camps.ok){
@@ -116,6 +152,7 @@ const influ_profile={
                 this.par=po
                 let npo=vinfo.notpartof
                 this.camps=npo
+                console.log
             }
             const val_ads=await fetch(url+'/api/ads')
             if (val_ads.ok){
