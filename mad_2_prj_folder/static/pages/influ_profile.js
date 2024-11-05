@@ -101,6 +101,9 @@ const influ_profile={
         reqs(){
             router.push('/reqs')
         },
+        search(){
+            router.push('/search')
+        },
         async ask(c){
             //the influencer is requesting this campaign, so this will start being with a negotiation status
             let ad={}

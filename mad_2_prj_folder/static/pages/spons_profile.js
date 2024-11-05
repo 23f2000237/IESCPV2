@@ -8,7 +8,9 @@ function inval_date(st){
 const spons_profile={
     template:`<div v-if="approval">
     <div v-if="flag=='True'">
+    
     <h1> Welcome {{name}} </h1>
+    <router-link to='/search'><button class='btn btn-link' >Search for Influencers </button></router-link>
     <table class='table-primary table-bordered'>
     <caption class="caption">Active Campaigns</caption>
     <tr>
@@ -37,6 +39,7 @@ const spons_profile={
             </td>
         </tr>
 </table>
+
 <table class='table-danger table-bordered' v-if="ads.length >0">
     <tr>
         <th>Influencer</th>

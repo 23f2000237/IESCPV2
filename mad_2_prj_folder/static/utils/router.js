@@ -7,6 +7,7 @@ import admin_profile from '../pages/admin_profile.js';
 import spons_profile from '../pages/spons_profile.js';
 import crecam from '../components/cre_cam.js';
 import requests from "../pages/requests.js";
+import ser from '../pages/search.js';
 const routes=[
     {path:'/',component:Home},
     {path:'/login',component:login},
@@ -16,7 +17,8 @@ const routes=[
     {path:'/inf/profile',component:influ_profile},
     {path:'/admin/profile',component:admin_profile},
     {path:'/spons/profile',component:spons_profile},
-    {path:'/reqs',component:requests}
+    {path:'/reqs',component:requests},
+    {path:'/search',component:ser}
 ]
 const router=new VueRouter({routes,})
 export default router

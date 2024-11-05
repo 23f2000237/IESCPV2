@@ -5,6 +5,37 @@ import sqlite3
 from extn import db
 conn=sqlite3.connect(r'instance\baknd.db',check_same_thread=False)
 cur=conn.cursor()
+
+def cor(l):
+    r=[]
+    for i in l:
+        r.append(i[0])
+    return r
+
+def conv(data,r):
+    #this is a function that takes in a list we got from cur.fetchall() and returns a list of dictionaries as it is easier to acces in js
+    l=[]
+    for i in data:
+        d={}
+        d['c_id']=i[0]
+        d['s_email']=i[1]
+        d['title']=i[2]
+        d['message']=i[3]
+        d['s_date']=i[4]
+        d['e_date']=i[5]
+        d['budget']=i[6]
+        d['niche']=i[7]
+        d['flag']=i[8]
+        if len(i)>9:
+            d['site']=i[9]
+            d['name']=i[10]
+        if i[0] in r:
+             d['part']='true'
+        else:
+             d['part']='false'
+        l.append(d)
+    return l    
+
 def create_view(app,ud:SQLAlchemyUserDatastore):
     @app.route('/')
     def home():
@@ -99,3 +130,24 @@ def create_view(app,ud:SQLAlchemyUserDatastore):
               return jsonify({"message":"yes"})
          else:
               return jsonify({"message":"no"})
+    @app.route('/search')
+    def search():
+         role=current_user.roles[0].name
+         if role=='Inf':
+              em=current_user.email
+              #Influencer can search for all eligible campaigns that are running 
+              q_nic="select Niche from Influencer where email='{}'".format(em)
+              cur.execute(q_nic)
+              nic=cur.fetchone()[0]
+              q="select C_id,c.s_email,Title,Message,S_date,E_date,Budget,Niche,c.Flag,s.site,u.name from Campaigns c, Sponsor s,user u  where ((c.s_email=u.email and u.email=s.email_id) and (Niche='{}' or Niche='public')) and (c.Flag='True')".format(nic)
+              cur.execute(q)
+              l=cur.fetchall()
+              #Let's add another attribute specifying if the influencer is already part of the campaign
+              q_cid="select C_id from Ads where I_email='{}'".format(em)
+              cur.execute(q_cid)
+              cid=cor(cur.fetchall())
+              res=conv(l,cid)
+              return {"res":res,"role":role,"email":em},'200'
+         elif role=='Spons':
+              print('here')
+              return '200'

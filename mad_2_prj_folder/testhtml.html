@@ -134,3 +134,12 @@
         </div>
     </div>
 </div>
+
+<div class="card text-bg-primary mb-3" style="max-width: 18rem;" v-for="val in camps_show">
+    <div class="card-header">
+        {{val.title}}
+        <div class="card-header">Sponsor: {{val.name}}</div>
+    <div class="card-body">
+        {{val.message}}
+    </div>
+</div>
