@@ -36,6 +36,22 @@ def conv(data,r):
         l.append(d)
     return l    
 
+def inc(l):
+     #u.name,i.email,Category,Niche,Reach,Flag,site
+    r=[]
+    for i in l:
+        d={}
+        d['name']=i[0]
+        d['email']=i[1]
+        d['category']=i[2]
+        d['niche']=i[3]
+        d['reach']=i[4]
+        d['flag']=i[5]
+        d['site']=i[6]
+        r.append(d)
+    return r
+
+
 def create_view(app,ud:SQLAlchemyUserDatastore):
     @app.route('/')
     def home():
@@ -133,8 +149,9 @@ def create_view(app,ud:SQLAlchemyUserDatastore):
     @app.route('/search')
     def search():
          role=current_user.roles[0].name
+         em=current_user.email
          if role=='Inf':
-              em=current_user.email
+              
               #Influencer can search for all eligible campaigns that are running 
               q_nic="select Niche from Influencer where email='{}'".format(em)
               cur.execute(q_nic)
@@ -149,5 +166,8 @@ def create_view(app,ud:SQLAlchemyUserDatastore):
               res=conv(l,cid)
               return {"res":res,"role":role,"email":em},'200'
          elif role=='Spons':
-              print('here')
-              return '200'
+              #let the frontend filter it,here they can get only the details
+              q="select u.name,i.email,Category,Niche,Reach,Flag,site from user u,Influencer i where (u.email=i.email) and (Flag='True')"
+              cur.execute(q)
+              data=inc(cur.fetchall())
+              return {"res":data,"role":role,"email":em},'200'

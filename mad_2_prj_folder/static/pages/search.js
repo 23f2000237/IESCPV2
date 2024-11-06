@@ -24,7 +24,20 @@ const ser={
 </div>  
     </div>
     <div v-if="role=='Spons'">
-    <p>Influ can't see this shit</p>
+    <div class="card text-bg-primary mb-3" style="max-width: 18rem;" v-for="val in inf_show">
+    <div class="card-header">
+        Name: {{val.name}}
+    </div>
+    <div>
+       <p class="card-text" style="color:red">Niche:{{val.niche}} </p>
+       <p class="card-text" style="color:green"> Reach:{{val.reach}}</p>
+       <span>
+       <p class="card-text" style="color:gold">{{val.category}}</p>
+       <a class="card-text" :href="val.site"> visit site </a>
+       </span>
+       <button class='btn btn-warning' @click='req_inf(val)'>Request </button>
+    </div>
+</div>
     </div>
     </span>
     </div>`,
@@ -36,7 +49,8 @@ data(){
         infs:[],
         camps_show:[],
         inf_show:[],
-        email:""
+        email:"",
+        cs:[]
     }
 },
 methods:{
@@ -45,6 +59,12 @@ methods:{
         this.camps.forEach(camp => {
             if(camp.title==this.se){
                 this.camps_show.push(camp)  
+            }
+        });
+        this.inf_show=[]
+        this.infs.forEach(inf => {
+            if(inf.name==this.se){
+                this.inf_show.push(inf)  
             }
         });
     },
@@ -76,6 +96,27 @@ methods:{
                       },
                       body: JSON.stringify(ad)
                 })
+    },
+    async req_inf(inf){
+        let ad={}
+        ad.C_id=window.prompt("enter your campaign id ")
+        ad.title=window.prompt('What is the title you are proposing ? ')
+        ad.Message=window.prompt('What message would you like to post to the Influencer ?')
+        ad.Negotiated=window.prompt("What is your negotiated pay? keep the campaign's budget in mind")
+        ad.I_email=inf.email
+        ad.salary=0
+        ad.Status='Pending'
+        const url=window.location.origin
+            const val= await fetch(
+                url+'/api/ads',
+                {
+                    method:'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify(ad)
+                })
+
     }
 },
 async mounted(){

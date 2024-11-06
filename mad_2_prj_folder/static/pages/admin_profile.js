@@ -44,26 +44,26 @@ template:`
         <th scope="col">Site</th>
         </tr>
         <tr v-for="i in inf_info"> 
-            <td scope="row">{{i[0]}}</td>
-            <td >{{i[1]}}</td>
-            <td >{{i[2]}}</td>
-            <td >{{i[3]}}</td>
-            <td>{{i[4]}}</td>
-            <td>     {{i[5]}}</td>
-            <div v-if="i[6]=='False'">
-            <div class='table-danger'> <button @click="flag_inf(i[6])" class='btn-success'> Unflag </button> </div>
+            <td scope="row">{{i.name}}</td>
+            <td >{{i.email}}</td>
+            <td >{{i.category}}</td>
+            <td >{{i.niche}}</td>
+            <td>{{i.reach}}</td>
+            <td>     {{i.balance}}</td>
+            <div v-if="i.flag=='False'">
+            <div class='table-danger'> <button @click="flag_inf(i)" class='btn-success'> Unflag </button> </div>
                </div>
             <div v-else>
-            <div class='table-danger'> <button @click="flag_inf(i[6])" class='btn-danger'> Flag </button> </div>
+            <div class='table-danger'> <button @click="flag_inf(i)" class='btn-danger'> Flag </button> </div>
             </div>
-            <td ><button @click="visit(i[7])" class='btn-success'>Visit site </button></td>
+            <td ><button @click="visit(i.site)" class='btn-success'>Visit site </button></td>
         </tr>
 </table>
 <table class='table-primary table-bordered'>
     <caption class="caption">Campaingn</caption>
     <tr>
         <th scope="col">C_id</th>
-        <th scope="col">email</th>
+        <th scope="col">Sponsor</th>
         <th scope="col">title</th>
         <th scope="col">Message</th>
         <th scope="col">S_date</th>
@@ -73,15 +73,20 @@ template:`
         <th scope="col">Flag</th>
         </tr>
         <tr v-for="c in camp_info"> 
-            <td scope="row">{{c[0]}}</td>
-            <td >{{c[1]}}</td>
-            <td >{{c[2]}}</td>
-            <td>{{c[3]}}</td>
-            <td >{{c[4]}}</td>
-            <td >{{c[5]}}</td>
-            <td>{{c[6]}}</td>
-            <td>{{c[7]}}</td>
-            <td >{{c[8]}}</td>
+            <td scope="row">{{c.c_id}}</td>
+            <td >{{c.name}}</td>
+            <td >{{c.title}}</td>
+            <td>{{c.message}}</td>
+            <td >{{c.s_date}}</td>
+            <td >{{c.e_date}}</td>
+            <td>{{c.budget}}</td>
+            <td>{{c.niche}}</td>
+            <div v-if="c.flag=='False'">
+            <div class='table-danger'> <button @click="flag_camp(c)" class='btn-success'> Unflag </button> </div>
+               </div>
+            <div v-else>
+            <div class='table-danger'> <button @click="flag_camp(c)" class='btn-danger'> Flag </button> </div>
+            </div>
         </tr>
 </table>
     </div>
@@ -104,7 +109,6 @@ data (){
     {
         async flag(fl){
             //this is to update the details for sposnsors.
-            console.log(fl)
             if (fl.flag=='True'){
                 fl.flag='False'
              }
@@ -122,7 +126,17 @@ data (){
             window.open(l)
         },
         async flag_inf(fl){
-            console.log(fl)
+            if (fl.flag=='True'){
+                fl.flag='False'
+             }
+             else{
+                fl.flag='True'
+             }
+            const url=window.location.origin
+            const req= await fetch(url+'/api/inf',{
+                method:"PUT",headers: {
+                    "Content-Type": "application/json",
+                  },body:JSON.stringify({"Flag":fl.flag,"email":fl.email})})
         },
         async app(bl){
             const url=window.location.origin
@@ -130,6 +144,19 @@ data (){
                 method:"PUT",headers: {
                     "Content-Type": "application/json",
                   },body:JSON.stringify({"Approval":'True',"email":fl[1]})})
+        },
+        async flag_camp(fl){
+            if (fl.flag=='True'){
+                fl.flag='False'
+             }
+             else{
+                fl.flag='True'
+             }
+            const url=window.location.origin
+            const req= await fetch(url+'/api/camps',{
+                method:"PUT",headers: {
+                    "Content-Type": "application/json",
+                  },body:JSON.stringify({"Flag":fl.flag,"C_id":fl.c_id})})
         }
     },
  async mounted(){

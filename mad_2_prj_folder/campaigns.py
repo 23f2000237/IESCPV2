@@ -16,6 +16,7 @@ parser.add_argument('Budget', type=int)
 parser.add_argument('Niche', type=str)
 parser.add_argument('Flag', type=str)
 parser.add_argument('c_id',type=int)
+
 campaign_fields={
     "C_id":fields.Integer,
     "s_email":fields.String,
@@ -76,9 +77,9 @@ class Campaigns(Resource):
             Influ_partof=conv(Influ_partof)
             return{"partof":Influ_partof,"notpartof":Influ_not_partof},200
         elif role=='Admin':
-            q="select * from Campaigns"
+            q="select C_id,s_email,Title,Message,S_date,E_date,Budget,c.Niche,c.Flag,s.site,u.name from Campaigns c, Sponsor s,user u where (c.s_email=s.email_id and s.email_id=u.email)"
             cur.execute(q)
-            all_data=cur.fetchall()
+            all_data=conv(cur.fetchall())
             return all_data
             
     

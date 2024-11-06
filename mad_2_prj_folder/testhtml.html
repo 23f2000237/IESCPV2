@@ -143,3 +143,18 @@
         {{val.message}}
     </div>
 </div>
+
+<div class="card text-bg-primary mb-3" style="max-width: 18rem;" v-for="inf in inf_show">
+    <div class="card-header">
+        Name: {{val.name}}
+    </div>
+    <div class="card-header">Niche: {{val.niche}}</div>
+    <div>
+       <p class="card-text"> Reach:{{val.reach}}</p>
+       <span>
+       <p class="card-text" style="color:gold">{{val.category}}</p>
+       <a class="card-text" :href="val.site"> visit site </a>
+       </span>
+       <button class='btn btn-warning' @click='req(val)'>Request </button>
+    </div>
+</div>

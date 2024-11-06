@@ -13,6 +13,7 @@ parser.add_argument("Balance",type=int)
 parser.add_argument("Flag",type=str)
 parser.add_argument("site",type=str)
 parser.add_argument("name",type=str)
+parser.add_argument('at',type=str)
 inf_fields={
     "name":fields.String,
     "email":fields.String,
@@ -45,39 +46,42 @@ class Influencer(Resource):
             inf_data=jsonify({"email":email,"category":cat,"Niche":nic,"Reach":reach,"Balance":bal,"Flag":flag,"site":site,"name":name,"role":role})
             return inf_data
         elif role=='Admin':
-            q1='select name,i.email,Category,Niche,Reach,Balance,Flag,site from user u,Influencer i where i.email=u.email'
+            q1='select name,i.email,Category,Niche,Reach,Balance,Flag,site from user u,Influencer i where (i.email=u.email)'
             cur.execute(q1)
             info=cur.fetchall()
-            return info,'200'
+            res=[]
+            for i in info:
+                d={}
+                d['name']=i[0]
+                d['email']=i[1]
+                d['category']=i[2]
+                d['niche']=i[3]
+                d['reach']=i[4]
+                d['balance']=i[5]
+                d['flag']=i[6]
+                d['site']=i[7]
+                res.append(d)
+            return res,'200'
     @auth_required()
     def put(self):
         role=current_user.roles[0].name
         if role=='Inf':
-            #Influencer can edit their email,name,category,reach,site
+            #Influencer can edit their email,name,category,reach,site,Niche
             #they can't edit their balance and flag
-            email=current_user.email
+            email=current_user.email    
             args=parser.parse_args()
-            for i in inf_fields:
-                if i=="Reach":
-                    q='update Influencer set Reach={r} where email="{e}"'.format(r=args[i],e=email)
-                    cur.execute(q)
-                    conn.commit()
-                elif i=='name':
-                    cur_email=current_user.email
-                    q='update user set name="{v}" where email="{e}"'.format(v=args[i],e=cur_email)
-                    cur.execute(q)
-                    conn.commit()
-                elif i=='email':
-                    q="update Influencer set email='{ne}' where email='{e}'".format(e=email,ne=args[i])
-                    q2="update user set email='{ne}' where email='{e}'".format(e=email,ne=args[i])
-                    cur.execute(q)
-                    conn.commit()
-                    cur.execute(q2)
-                    conn.commit()
-                else:
-                    q="update Influencer set {i}='{val}' where email='{e}'".format(i=i,val=args[i],e=email)
-                    cur.execute(q)
-                    conn.commit()
+            at=args.at
+            match at:
+                case 'name':
+                    q='update user set name="{name}" where email="{em}"'.format(name=args.name,em=email)
+                case 'niche':
+                    q='update Influencer set Niche="{nic}" where email="{em}"'.format(nic=args.Niche,em=email)
+                case 'cat':
+                    q='update Influencer set Category="{cat}" where email="{em}"'.format(cat=args.category,em=email)
+                case 'rea':
+                    q='update Influencer set Reach={rea} where email="{em}"'.format(rea=args.Reach,em=email)
+            cur.execute(q)
+            conn.commit()
             return {"Message":"Updated Succesfully"},'200'
         elif role=='Admin':
             #Admin can flag or unflag an Influencer
@@ -85,7 +89,7 @@ class Influencer(Resource):
             args=parser.parse_args()
             flag=args['Flag']
             email=args['email']
-            q="update Influencer set Flag='{f}' where email='{e}'".format(f=d[flag],e=email)#This only flags the user, the can still login to the app
+            q="update Influencer set Flag='{f}' where email='{e}'".format(f=flag,e=email)#This only flags the user, the can still login to the app
             cur.execute(q)
             conn.commit()
             return {"Message":"Updated Succesfully"},'200'

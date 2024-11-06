@@ -4,7 +4,11 @@ const influ_profile={
     <div v-if="logged">
     <div v-if="flag">
         <div>
-       <h1>Welcome {{name}} </h1>
+       <h1>Welcome {{name}} <button class='btn btn-primary' @click="upd_name()"> Update Name</button>
+       <button class='btn btn-success' @click="upd_nic()"> Update Niche</button>
+       <button class='btn btn-info' @click="upd_cat()"> Update Category</button>
+       <button class='btn btn-dark' @click="upd_rea()"> Update Reach</button>
+       </h1>
        <h1>Total earinings this Month: ₹ {{bal}} </h1>
        <h5>Campaigns you are part of: {{par.length}}</h5>
        <h5> (Note, the count is the number of campaigns confirmed) </h5>
@@ -133,7 +137,81 @@ const influ_profile={
                       },
                       body: JSON.stringify(ad)
                 })
-        } 
+        },
+        //for all update fns the arguments sent are {attribute,email,new_value}
+        async upd_name(){
+            let up={}
+            up.at='name'
+            up.name=window.prompt("enter your new name: ")
+            if (up.name==null){
+                up.name=this.name
+            }
+            this.name=up.name
+            const url=window.location.origin
+            const val= await fetch(
+                url+'/api/inf',
+                {
+                    method:'PUT',
+                    headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify(up)
+                })
+        },
+        async upd_nic(){
+            let up={}
+            up.at='niche'
+            up.Niche=window.prompt("enter your new Niche: ")
+            if (up.Niche==null){
+                up.Niche=this.Niche
+            }
+            const url=window.location.origin
+            const val= await fetch(
+                url+'/api/inf',
+                {
+                    method:'PUT',
+                    headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify(up)
+                })
+        },
+        async upd_cat(){
+            let up={}
+            up.at='cat'
+            up.category=window.prompt("enter your new Category: ")
+            if (up.category==null){
+                up.category=this.Category
+            }
+            const url=window.location.origin
+            const val= await fetch(
+                url+'/api/inf',
+                {
+                    method:'PUT',
+                    headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify(up)
+                })
+        },
+        async upd_rea(){
+            let up={}
+            up.at='rea'
+            up.Reach=window.prompt("enter your new Reach: ")
+            if (up.Reach==null){
+                up.Reach=this.Reach
+            }
+            const url=window.location.origin
+            const val= await fetch(
+                url+'/api/inf',
+                {
+                    method:'PUT',
+                    headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify(up)
+                })
+        }
     },
     async mounted(){
             const url=window.location.origin
