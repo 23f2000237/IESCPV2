@@ -17,6 +17,7 @@ const prof={
             let info=await val.json()
             this.logged=true
             this.role=info.role
+            sessionStorage.setItem("token", info.token);
             switch(this.role){
                 case 'Inf':{
             router.push('/inf/profile')

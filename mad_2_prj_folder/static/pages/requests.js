@@ -46,7 +46,7 @@ const requests={
             ad.Status='Paid'
             ad.Salary=ad.Negotiated
             const url=window.location.origin
-            const fet_req= await fetch(url+'/api/ads',{method:'PUT',headers: {"Content-Type": "application/json",},body: JSON.stringify(ad)})
+            const fet_req= await fetch(url+'/api/ads',{method:'PUT',headers: {"Content-Type": "application/json","Authentication-Token": sessionStorage.getItem("token")},body: JSON.stringify(ad)})
 
         },
         async neg(ad){
@@ -55,23 +55,24 @@ const requests={
         async conf(ad){
             ad.Status="Negotiated"
             const url=window.location.origin
-            const fet_req= await fetch(url+'/api/ads',{method:'PUT',headers: {"Content-Type": "application/json",},body: JSON.stringify(ad)})
+            const fet_req= await fetch(url+'/api/ads',{method:'PUT',headers: {"Content-Type": "application/json","Authentication-Token": sessionStorage.getItem("token")},body: JSON.stringify(ad)})
             this.n=!this.n
         },
         async rej(ad){
             const url=window.location.origin
-            const fet_req= await fetch(url+'/api/ads',{method:'DELETE',headers: {"Content-Type": "application/json",},body: JSON.stringify(ad)})
+            const fet_req= await fetch(url+'/api/ads',{method:'DELETE',headers: {"Content-Type": "application/json","Authentication-Token": sessionStorage.getItem("token")},body: JSON.stringify(ad)})
             const ind=this.ads.indexOf(ad)
             this.ads.splice(ind,1)
         }
     },
 async mounted(){
     const url=window.location.origin
-    const val=await fetch(url+'/api/ads')
+    const val=await fetch(url+'/api/ads',{headers:{"Authentication-Token": sessionStorage.getItem("token")},})
     if(val.ok){
         let ads=await val.json()
         this.ads=ads.ads
     }
+    const seen=await fetch(url+'/turntoseen',{headers:{"Authentication-Token": sessionStorage.getItem("token")},})
 }
 }
 export default requests;

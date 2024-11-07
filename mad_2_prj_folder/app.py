@@ -22,6 +22,9 @@ def create_app():
     app.config['WTF_CSRF_CHECK_DEFAULT']=False
     app.config["SECURITY_CSRF_PROTECH_MECHANISMS"]=[]
     app.config["SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS"]=True
+    app.config['SECURITY_TOKEN_AUTHENTICATION_HEADER'] = 'Authentication-Token'
+    app.config['SECURITY_TOKEN_MAX_AGE'] = 3600 #1hr
+    app.config['SECURITY_LOGIN_WITHOUT_CONFIRMATION'] = True
     create_view(app,ud)
     api.init_app(app)
     adpi.init_app(app)

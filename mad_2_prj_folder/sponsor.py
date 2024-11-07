@@ -20,7 +20,7 @@ spons_fields={
 }
 
 class Sponsor(Resource):
-    @auth_required()
+    @auth_required('token')
     def get(self):
         role=current_user.roles[0].name
         if role=='Spons':
@@ -82,7 +82,7 @@ class Sponsor(Resource):
                 l.append(d)
             return {"data":data,"sitedata":l}
     
-    @auth_required()
+    @auth_required('token')
     def put(self):
         args=parser.parse_args()
         #A sponsor can change all their details except flag and approval

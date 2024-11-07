@@ -93,6 +93,7 @@ methods:{
                     method:'POST',
                     headers: {
                         "Content-Type": "application/json",
+                        "Authentication-Token": sessionStorage.getItem("token"),
                       },
                       body: JSON.stringify(ad)
                 })
@@ -113,6 +114,8 @@ methods:{
                     method:'POST',
                     headers: {
                         "Content-Type": "application/json",
+                        "Authentication-Token": sessionStorage.getItem("token"),
+
                       },
                       body: JSON.stringify(ad)
                 })
@@ -121,7 +124,12 @@ methods:{
 },
 async mounted(){
     const url=window.location.origin
-    const data=await fetch(url+'/search')
+    const data=await fetch(url+'/search',{
+        headers: {
+          "Authentication-Token": sessionStorage.getItem("token"),
+        },
+      }
+    )
     if (data.ok){
         let info=await data.json()
         this.role=info.role

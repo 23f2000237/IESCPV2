@@ -91,6 +91,7 @@ def create_view(app,ud:SQLAlchemyUserDatastore):
          email=current_user.email
          name=current_user.name
          role=current_user.roles[0].name
+         token=current_user.get_auth_token()
          if role=='Inf':
               q="select Category,Niche,Reach,Balance,flag,site from Influencer where email='{}'".format(email)
               cur.execute(q)
@@ -98,12 +99,12 @@ def create_view(app,ud:SQLAlchemyUserDatastore):
               q2="select * from Campaigns where Niche in ('Public','{}')".format(nic)
               cur.execute(q2)
               camp=cur.fetchall()
-              return jsonify({"email":email,"name":name,"cat":cat,"nic":nic,"reach":reach,"bal":bal,"flag":flag,"site":site,"role":role,"camps":camp}),200
+              return jsonify({"email":email,"name":name,"cat":cat,"nic":nic,"reach":reach,"bal":bal,"flag":flag,"site":site,"role":role,"camps":camp,"token":token}),200
          elif role=='Spons':
               q="select Industry,Flag,site from Sponsor where email_id='{}'".format(email)
               cur.execute(q)
               ind,flag,site=cur.fetchone()
-              return jsonify({"email":email,"name":name,"role":role,"ind":ind,"flag":flag,"site":site}),200
+              return jsonify({"email":email,"name":name,"role":role,"ind":ind,"flag":flag,"site":site,"token":token}),200
          else:
               q="select * from Campaigns"
               cur.execute(q)
@@ -120,9 +121,10 @@ def create_view(app,ud:SQLAlchemyUserDatastore):
               q='select name from user where email="{}"'.format(current_user.email)
               cur.execute(q)
               name=cur.fetchone()[0]
-              return jsonify({"text":"under construction. Admin's db should show some stats","name":name,"role":'Admin',"camps":camp,"Ads":ads,"spons":spons,"inf":inf}),200
+              return jsonify({"text":"under construction. Admin's db should show some stats","name":name,"role":'Admin',"camps":camp,"Ads":ads,"spons":spons,"inf":inf,"token":token}),200
     @app.route('/inf/spons/<cid>',methods=['POST','GET'])
     @roles_required('Spons')
+    @auth_required('token')
     def inf_spons(cid):
         q1="select Niche from Campaigns where C_id={}".format(cid)
         cur.execute(q1)
@@ -147,11 +149,11 @@ def create_view(app,ud:SQLAlchemyUserDatastore):
          else:
               return jsonify({"message":"no"})
     @app.route('/search')
+    @auth_required('token')
     def search():
          role=current_user.roles[0].name
          em=current_user.email
          if role=='Inf':
-              
               #Influencer can search for all eligible campaigns that are running 
               q_nic="select Niche from Influencer where email='{}'".format(em)
               cur.execute(q_nic)
@@ -171,3 +173,80 @@ def create_view(app,ud:SQLAlchemyUserDatastore):
               cur.execute(q)
               data=inc(cur.fetchall())
               return {"res":data,"role":role,"email":em},'200'
+    
+    @app.route('/turntoseen')
+    @auth_required('token')
+    @roles_required('Inf')
+    def seen():
+         #this will just update all those ads as seen (to 'yes') once the requests tab is mounted
+         em=current_user.email
+         q="update seen set seen='yes' where A_id in (select A_id from Ads where I_email='{}')".format(em)
+         cur.execute(q)
+         conn.commit()
+         return '200'
+    @app.route('/stats')
+    @auth_required('token')
+    def stats():
+         #this will return the stats for each person with respect to their role
+        role=current_user.roles[0].name
+        em=current_user.email
+        if role=='Inf':
+             #Descriptive stats of their previous salaries
+            q="select Salary from Ads where I_email='{}'".format(em)
+            cur.execute(q)
+            sal=cor(cur.fetchall())
+            #mean=sum(sal)/len(sal)
+            mean=sum(sal)/len(sal)
+            sorted_sal=sorted(sal)
+            n=len(sal)
+            if n%2==0:
+                median=(sorted_sal[n//2]+sorted_sal[(n//2) +1])/2
+            else:
+                 median=sorted_sal[(n+1)//2]            
+            max_sal=sorted_sal[-1]
+            #give out a frequency table
+            d={}
+            for i in sorted_sal:
+                if i in d:
+                    d[i]+=1
+                else:
+                    d[i]=1
+            q2="select name from user where email in (select s_email from Campaigns where C_id in (select C_id from Ads where I_email='{}' group by I_email order by count(A_id) desc))".format(em)
+            cur.execute(q2)
+            spons_name=cor(cur.fetchall())
+            #spons_name has the sponsors arranged from more colabs to least
+            q3="select sum(salary) from Ads where (A_id in (select A_id from seen where b_date between date('now','start of month','-1 month') and date('now'))) and I_email='{}'".format(em)
+            cur.execute(q3)
+            one_month_sal=cur.fetchone()[0]
+            return {"role":role,"mean":mean,"median":median,"max_sal":max_sal,"feq_dist":d,"spons_name":spons_name},200
+        elif role=='Spons':
+            #sponsor sees the most participated campaign, most spent campaign, frequent collaborating Influencer
+            q="select title from Campaigns where (C_id in (select C_id from Ads group by C_id order by count(C_id) desc)) and (s_email='{}')".format(em)
+            cur.execute(q)
+            camp=cor(cur.fetchall()) #has a list of camapigns in descending order of number of participants
+            q2="select title from Campaigns where (s_email='{}') and (C_id in (select C_id from Ads group by C_id order by sum(Salary) desc))".format(em)
+            cur.execute(q2)
+            msp=cor(cur.fetchall()) #most spent campaigns in descending order
+            q3="select name from user where email in (select I_email from Ads where C_id in (select C_id from Campaigns where s_email='{}') group by I_email order by count(A_id) desc )".format(em)
+            cur.execute(q3)
+            names=cor(cur.fetchall())#collaborating influencer in descending order of no. of colabs
+            return {"role":role,"camp":camp,"msp":msp,"names":names},200
+        else:
+            #Admin can see the best performing Influencer and campaign in terms of money and no.of ads done 
+            q1="select name from user where email in (select I_email from Ads group by I_email order by count(A_id) desc)"
+            cur.execute(q1)
+            inf_n=cor(cur.fetchall())#in terms of no.of ads
+            q2="select name from user where email in (select I_email from Ads group by I_email order by sum(Salary) desc)"
+            cur.execute(q2)
+            inf_s=cor(cur.fetchall())#in terms of salary
+            q3="select title from Campaigns where C_id in (select C_id from Ads group by C_id order by count(A_id) desc)"
+            cur.execute(q3)
+            cp_n=cor(cur.fetchall())#most participated campaigns
+            q4="select title from Campaigns where C_id in (select C_id from Ads group by C_id order by sum(Salary) desc)"
+            cur.execute(q4)
+            cp_s=cor(cur.fetchall())#in terms of money spent
+            q5="select name from user where email in (select s_email from Campaigns where budget in (select max(budget) from Campaigns))"
+            cur.execute(q5)
+            sp_max_budget=cor(cur.fetchall())#sponsor who gave the maximum budget
+            return {"role":role,"inf_n":inf_n,"inf_s":inf_s,"cp_n":cp_n,"cp_s":cp_s,"sp_max_budget":sp_max_budget},200          
+        return '200'

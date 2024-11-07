@@ -55,7 +55,7 @@ def conv(data):
     return l
 
 class Campaigns(Resource):
-    @auth_required()
+    @auth_required('token')
     def get(self):
         role=current_user.roles[0].name
         if role=='Spons':
@@ -83,7 +83,7 @@ class Campaigns(Resource):
             return all_data
             
     
-    @auth_required()
+    @auth_required('token')
     def post(self):
         args=parser.parse_args()
         q='insert into Campaigns(s_email,title,Message,S_date,E_date,Budget,Niche) values("{s_email}","{title}","{Message}","{S_date}","{E_date}",{Budget},"{Niche}")'.format(C_id=args.C_id,s_email=args.s_email,title=args.title,Message=args.Message,S_date=args.S_date,E_date=args.E_date,Budget=args.Budget,Niche=args.Niche,Flag=args.Flag)
@@ -92,7 +92,7 @@ class Campaigns(Resource):
         conn.commit()
         return {"message":"campaign_created"},200
     
-    @auth_required()
+    @auth_required('token')
     def put(self):
         #two types of updating
         args=parser.parse_args()
@@ -114,7 +114,7 @@ class Campaigns(Resource):
                         upd(C_id,arg,args[arg])
         return {"message":"campaign_updated"},200
     
-    @auth_required()
+    @auth_required('token')
     def delete(self):
         args=parser.parse_args()
         q='delete from Campaigns where C_id={}'.format(args.c_id)

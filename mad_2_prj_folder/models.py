@@ -65,3 +65,10 @@ class Ads(db.Model):
     Status=db.Column(db.String(80),nullable=False,default='Pending')
     salary=db.Column(db.Integer)
     Negotiated=db.Column(db.Integer,nullable=False)
+
+class seen(db.Model):
+    __tablename__='seen'
+    pk=db.Column(db.Integer,primary_key=True)
+    A_id=db.Column(db.Integer,db.ForeignKey('Ads.A_id'))
+    b_date=db.Column(db.String(80),nullable=False)
+    seen=db.Column(db.String(80),nullable=False,default='no')

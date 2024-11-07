@@ -22,6 +22,7 @@ parser.add_argument('Negotiated', type=int)
 parser.add_argument('bud', type=int)
 parser.add_argument('cham', type=bool)
 parser.add_argument('chat', type=bool)
+parser.add_argument('t_date',type=str)
 advert_fields={
     "A_id":fields.Integer,
     "C_id":fields.Integer,
@@ -55,7 +56,7 @@ def fn(l):
     return data
 
 class ads(Resource):
-    @auth_required()
+    @auth_required('token')
     def get(self):
         role=current_user.roles[0].name
         if role=='Spons':
@@ -86,15 +87,25 @@ class ads(Resource):
             return {"flagged_ads":flagged_ads,"un_flagged_ads":un_flagged_ads},200 #Admin can see every advertisment 
 
     
-    @auth_required()
+    @auth_required('token')
     def post(self):
         args=parser.parse_args()
         q='insert into Ads(C_id,I_email,title,Message,Salary,Status,Negotiated) values({cid},"{I_email}","{title}","{message}",{salary},"{status}",{neg})'.format(cid=args.C_id,I_email=args.I_email,title=args.title,message=args.Message,salary=args.salary,neg=args.Negotiated,status=args.Status)
         cur.execute(q)
         conn.commit()
+        q1='select A_id from Ads order by A_id Desc'
+        cur.execute(q1)
+        aid=cur.fetchone()[0]
+        role=current_user.roles[0].name
+        if role=='Spons':
+            q2="insert into seen(A_id,b_date) values({aid},Date('now'))".format(aid=aid)
+        elif role=='Inf':
+            q2="insert into seen(A_id,b_date,seen) values({aid},Date('now'),'yes')".format(aid=aid)
+        cur.execute(q2)
+        conn.commit()
         return {"Message":"Ad Added"},200
     
-    @auth_required()
+    @auth_required('token')
     def delete(self):
         args=parser.parse_args()
         if (args.Salary!=0):
@@ -111,7 +122,7 @@ class ads(Resource):
         conn.commit()
         return {"Message":"Ad deleted"},200
     
-    @auth_required()
+    @auth_required('token')
     def put(self):
         args=parser.parse_args()
         role=current_user.roles[0].name

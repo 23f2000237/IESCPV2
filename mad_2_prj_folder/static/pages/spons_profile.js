@@ -172,7 +172,11 @@ methods:{
         this.bud=c.budget
         const url=window.location.origin
         let ul='/inf/spons/'+c.c_id
-        const val_inf=await fetch(url + ul)
+        const val_inf=await fetch(url + ul,{
+            headers: {
+              "Authentication-Token": sessionStorage.getItem("token"),
+            },
+          })
         if (val_inf.ok){
             let inf=await val_inf.json()
             this.inf_lst=inf
@@ -199,6 +203,7 @@ methods:{
                 method:'POST',
                 headers: {
                     "Content-Type": "application/json",
+                    "Authentication-Token": sessionStorage.getItem("token")
                   },
                   body: JSON.stringify(this.new_ad)
             })
@@ -208,6 +213,7 @@ methods:{
                     method:'PUT',
                     headers: {
                         "Content-Type": "application/json",
+                        "Authentication-Token": sessionStorage.getItem("token")
                       },
                       body: JSON.stringify(this.c_temp)
                 }
@@ -224,6 +230,7 @@ methods:{
                 method:'POST',
                 headers: {
                     "Content-Type": "application/json",
+                    "Authentication-Token": sessionStorage.getItem("token")
                   },
                   body: JSON.stringify(this.new_camp)
             })
@@ -241,6 +248,7 @@ methods:{
             method:'DELETE',
             headers: {
                 "Content-Type": "application/json",
+                "Authentication-Token": sessionStorage.getItem("token")
               },
               body: JSON.stringify(this.camps[ind])
         })
@@ -256,6 +264,7 @@ methods:{
                  method:'DELETE',
                  headers: {
                      "Content-Type": "application/json",
+                     "Authentication-Token": sessionStorage.getItem("token")
                    },
                    body: JSON.stringify(this.ads[ind])
              })
@@ -265,12 +274,12 @@ methods:{
     async cham(ad){
         ad['cham']=true
         ad.Message=window.prompt('Are you changing your message from '+ad['Message']+' ?',ad['Message'])
-        const put_req=await fetch(this.url+'/api/ads',{method:'PUT',headers: {"Content-Type": "application/json",},body: JSON.stringify(ad)})
+        const put_req=await fetch(this.url+'/api/ads',{method:'PUT',headers: {"Content-Type": "application/json","Authentication-Token": sessionStorage.getItem("token")},body: JSON.stringify(ad)})
     },
     async chat(ad){
         ad['chat']=true
         ad.Title=window.prompt('Are you changing your title from '+ad['Title']+' ? ', ad['Title'])
-        const put_req=await fetch(this.url+'/api/ads',{method:'PUT',headers: {"Content-Type": "application/json",},body: JSON.stringify(ad)})
+        const put_req=await fetch(this.url+'/api/ads',{method:'PUT',headers: {"Content-Type": "application/json","Authentication-Token": sessionStorage.getItem("token")},body: JSON.stringify(ad)})
     },
     async upd(c){
         let op={}
@@ -293,6 +302,7 @@ methods:{
                 method:'PUT',
                 headers: {
                     "Content-Type": "application/json",
+                    "Authentication-Token": sessionStorage.getItem("token")
                   },
                   body: JSON.stringify(op)
             }
@@ -314,17 +324,21 @@ methods:{
         }
         else{
         ad['bud']=this.camps[ind].budget
-        const put_req=await fetch(this.url+'/api/ads',{method:'PUT',headers: {"Content-Type": "application/json",},body: JSON.stringify(ad)})}
+        const put_req=await fetch(this.url+'/api/ads',{method:'PUT',headers: {"Content-Type": "application/json","Authentication-Token": sessionStorage.getItem("token")},body: JSON.stringify(ad)})}
     },
     async acc(ad){
         ad.Salary=ad.Negotiated
         ad.Status='Paid'
-        const put_req=await fetch(this.url+'/api/ads',{method:'PUT',headers: {"Content-Type": "application/json",},body: JSON.stringify(ad)})
+        const put_req=await fetch(this.url+'/api/ads',{method:'PUT',headers: {"Content-Type": "application/json","Authentication-Token": sessionStorage.getItem("token")},body: JSON.stringify(ad)})
     }
 },
 async mounted(){
     const url=window.location.origin
-    const val=await fetch(url+'/api/spons')
+    const val=await fetch(url+'/api/spons',{
+        headers: {
+          "Authentication-Token": sessionStorage.getItem("token"),
+        },
+      })
     if (val.ok){
         let info=await val.json()
         info=info[0]
@@ -335,12 +349,20 @@ async mounted(){
         this.approval=info.approval
         this.site=info.site
     }
-    const val_camps=await fetch(url + '/api/camps')
+    const val_camps=await fetch(url + '/api/camps',{
+        headers: {
+          "Authentication-Token": sessionStorage.getItem("token"),
+        },
+      })
    if (val_camps.ok){
     let cinfo=await val_camps.json()
     this.camps=cinfo
    }
-   const val_ads = await fetch(url+'/api/ads')
+   const val_ads = await fetch(url+'/api/ads',{
+    headers: {
+      "Authentication-Token": sessionStorage.getItem("token"),
+    },
+  } )
    if(val_ads.ok){
     let ainfo=await val_ads.json()
     this.ads=ainfo

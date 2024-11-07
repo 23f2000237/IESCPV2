@@ -26,7 +26,7 @@ inf_fields={
 }
 
 class Influencer(Resource):
-    @auth_required()
+    @auth_required('token')
     def get(self):
         role=current_user.roles[0].name
         #what does each user need?
@@ -62,7 +62,7 @@ class Influencer(Resource):
                 d['site']=i[7]
                 res.append(d)
             return res,'200'
-    @auth_required()
+    @auth_required('token')
     def put(self):
         role=current_user.roles[0].name
         if role=='Inf':

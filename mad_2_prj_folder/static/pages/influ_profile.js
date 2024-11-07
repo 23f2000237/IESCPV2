@@ -134,6 +134,7 @@ const influ_profile={
                     method:'POST',
                     headers: {
                         "Content-Type": "application/json",
+                        "Authentication-Token": sessionStorage.getItem("token")
                       },
                       body: JSON.stringify(ad)
                 })
@@ -154,6 +155,7 @@ const influ_profile={
                     method:'PUT',
                     headers: {
                         "Content-Type": "application/json",
+                        "Authentication-Token": sessionStorage.getItem("token")
                       },
                       body: JSON.stringify(up)
                 })
@@ -172,6 +174,7 @@ const influ_profile={
                     method:'PUT',
                     headers: {
                         "Content-Type": "application/json",
+                        "Authentication-Token": sessionStorage.getItem("token")
                       },
                       body: JSON.stringify(up)
                 })
@@ -190,6 +193,7 @@ const influ_profile={
                     method:'PUT',
                     headers: {
                         "Content-Type": "application/json",
+                        "Authentication-Token": sessionStorage.getItem("token")
                       },
                       body: JSON.stringify(up)
                 })
@@ -208,6 +212,7 @@ const influ_profile={
                     method:'PUT',
                     headers: {
                         "Content-Type": "application/json",
+                        "Authentication-Token": sessionStorage.getItem("token")
                       },
                       body: JSON.stringify(up)
                 })
@@ -215,7 +220,11 @@ const influ_profile={
     },
     async mounted(){
             const url=window.location.origin
-            const val=await fetch(url+'/api/inf')
+            const val=await fetch(url+'/api/inf',{
+                headers: {
+                  "Authentication-Token": sessionStorage.getItem("token"),
+                },
+              })
             if (val.ok){
                 let info=await val.json()
                 this.name=info.name
@@ -226,7 +235,11 @@ const influ_profile={
                 this.site=info.site
                 this.email=info.email
                 }
-            const val_camps=await fetch(url + '/api/camps')
+            const val_camps=await fetch(url + '/api/camps',{
+                headers: {
+                  "Authentication-Token": sessionStorage.getItem("token"),
+                },
+              })
             if (val_camps.ok){
                 let vinfo=await val_camps.json()
                 let po=vinfo.partof
@@ -235,7 +248,11 @@ const influ_profile={
                 this.camps=npo
                 console.log
             }
-            const val_ads=await fetch(url+'/api/ads')
+            const val_ads=await fetch(url+'/api/ads',{
+                headers: {
+                  "Authentication-Token": sessionStorage.getItem("token"),
+                },
+              })
             if (val_ads.ok){
                 let ainfo=await val_ads.json()
             }

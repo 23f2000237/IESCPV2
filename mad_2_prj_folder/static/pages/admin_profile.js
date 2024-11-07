@@ -119,6 +119,7 @@ data (){
             const req= await fetch(url+'/api/spons',{
                 method:"PUT",headers: {
                     "Content-Type": "application/json",
+                    "Authentication-Token": sessionStorage.getItem("token")
                   },body:JSON.stringify({"Flag":fl.flag,"email":fl.email})})
                 
         },
@@ -136,6 +137,7 @@ data (){
             const req= await fetch(url+'/api/inf',{
                 method:"PUT",headers: {
                     "Content-Type": "application/json",
+                    "Authentication-Token": sessionStorage.getItem("token")
                   },body:JSON.stringify({"Flag":fl.flag,"email":fl.email})})
         },
         async app(bl){
@@ -143,6 +145,7 @@ data (){
             const req= await fetch(url+'/api/spons',{
                 method:"PUT",headers: {
                     "Content-Type": "application/json",
+                    "Authentication-Token": sessionStorage.getItem("token")
                   },body:JSON.stringify({"Approval":'True',"email":fl[1]})})
         },
         async flag_camp(fl){
@@ -156,15 +159,32 @@ data (){
             const req= await fetch(url+'/api/camps',{
                 method:"PUT",headers: {
                     "Content-Type": "application/json",
+                    "Authentication-Token": sessionStorage.getItem("token")
                   },body:JSON.stringify({"Flag":fl.flag,"C_id":fl.c_id})})
         }
     },
  async mounted(){
     const url=window.location.origin
-    const val_spons=await fetch(url+'/api/spons')
-    const val_admin=await fetch(url+'/profile')
-    const val_inf=await fetch(url + '/api/inf')
-    const val_camps=await fetch(url+'/api/camps')
+    const val_spons=await fetch(url+'/api/spons',{
+        headers: {
+          "Authentication-Token": sessionStorage.getItem("token"),
+        },
+      })
+    const val_admin=await fetch(url+'/profile',{
+        headers: {
+          "Authentication-Token": sessionStorage.getItem("token"),
+        },
+      })
+    const val_inf=await fetch(url + '/api/inf',{
+        headers: {
+          "Authentication-Token": sessionStorage.getItem("token"),
+        },
+      })
+    const val_camps=await fetch(url+'/api/camps',{
+        headers: {
+          "Authentication-Token": sessionStorage.getItem("token"),
+        },
+      })
     if (val_spons.ok){
        const sinfo=await val_spons.json()
         this.sp_info=sinfo
