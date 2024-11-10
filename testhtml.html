@@ -1,0 +1,160 @@
+<!--Admin Profile-->
+<div v-if="logged">
+    <div v-f="role=='Admin'">
+        <h1>Welcome {{name}}</h1>
+        <table>
+            <tr> 
+                <td>  </td>
+            </tr>
+        </table>
+    </div>
+    </div>
+
+<table>
+    <tr v-for="c in camps">
+        <td>{{c[0]}}</td>
+        <td>{{c[1]}}</td>
+    </tr>
+</table>
+
+
+<table class='table-primary table-bordered'>
+    <caption class="caption">Campaingn</caption>
+    <tr>
+        <th scope="col">C_id</th>
+        <th scope="col">email</th>
+        <th scope="col">title</th>
+        <th scope="col">Message</th>
+        <th scope="col">S_date</th>
+        <th scope="col">E_date</th>
+        <th scope="col">Budget</th>
+        <th scope="col">Niche</th>
+        <th scope="col">Flag</th>
+        </tr>
+        <tr v-for="c in camp_info"> 
+            <td scope="row">{{c[0]}}</td>
+            <td >{{c[1]}}</td>
+            <td >{{c[2]}}</td>
+            <td>{{c[3]}}</td>
+            <td >{{c[4]}}</td>
+            <td >{{c[5]}}</td>
+            <td>{{c[6]}}</td>
+            <td>{{c[7]}}</td>
+            <td >{{c[8]}}</td>
+        </tr>
+</table>
+
+
+<table>
+    <tr>
+        <th>Select your Influencer</th>
+        <th>Title of the advertisment</th>
+        <th>Message to the Influencer</th>
+        <th>Name your Price</th>
+    </tr>
+    <tr>
+        <td>
+            <select v-model="this.inf_lst" class="form-control" text="Influencer"  >
+                <option v-for="val in this.inf_lst">{val.name}</option>
+              </select>
+        </td>
+        <td> <input type="text" placeholder='Enter your title' v-model='new_ad.title' required> </td>
+        <td> <input type="text" placeholder='Enter your Message' v-model='new_ad.message' required> </td>
+        <td> <input type="text" placeholder='Name your price' v-model='new_ad.Negotiated' required> </td>
+
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <th>Influencer</th>
+        <th>Title</th>
+        <th>Message</th>
+        <th>Negotiated pay</th>
+        <th>              </th>
+    </tr>
+    <tr v-for="ad in ads">
+        <td> {{ad.I_email}}</td>
+        <td> {{ad.Title}} </td>
+        <td> {{ad.Message}} </td>
+        <td> {{ad.Negotiated}}  </td>
+    </tr>
+</table>
+
+
+<table v-if="camps.length>0">
+    <tr>
+        <th>Sponsor</th>
+        <th>Title</th>
+        <th>Message</th>
+        <th>Starts on</th>
+        <th>Ends on</th>
+        <th>Total Budget</th>
+        <th>Niche</th>
+    </tr>
+    <tr v-for="c in par" v-if="(c.flag=='True')">
+        <th> {{c.name}} </th>
+        <th>{{c.title}}</th>
+        <th>{{c.message}}</th>
+        <th>{{c.s_date}}</th>
+        <th>{{c.e_date}}</th>
+        <th>{{c.budget}}</th>
+        <th>{{c.niche}}</th>
+    </tr>
+</table>
+
+
+<div>
+    <div class="card text-bg-info mb-3" style="max-width: 18rem;" v-for="ad in ads">
+        <div class="card-header">
+            {{ad.Title}}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title"> Negotiated: ₹{{ad.Negotiated}}</h5>
+            <p class="card-text"> {{ad.Message}} </p>
+            <div v-if="ad.Status!='Paid'">
+                <div class="card-text" v-if="ad.Status=='Negotiated'"> 
+                    <input type="number" v-model='ad.Negotiated' required>
+                </div>
+                <div>
+                    <button class="btn btn-success" @click="acc(ad)"> Accept </button>
+                    <button class="btn btn-danger" @click="rej(ad)"> Reject </button>
+                    <div>
+                        <button class="btn btn-warning" @click="neg(ad)" v-if="ad.Status!='Negotiated'"> Negotiate </button>
+                        <button class="btn btn-info" @click="conf(ad)" v-if="ad.Status=='Negotiated'"> confirm </button>
+                    </div>
+                </div>
+            </div>
+            <div v-if="ad.Status=='Paid'">
+                <p>This is advertisment has been confirmed</p>
+            </div>
+            <div v-if="ad.Status='Negotiated'">
+                <p>Please wait till Sponsor's reply</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card text-bg-primary mb-3" style="max-width: 18rem;" v-for="val in camps_show">
+    <div class="card-header">
+        {{val.title}}
+        <div class="card-header">Sponsor: {{val.name}}</div>
+    <div class="card-body">
+        {{val.message}}
+    </div>
+</div>
+
+<div class="card text-bg-primary mb-3" style="max-width: 18rem;" v-for="inf in inf_show">
+    <div class="card-header">
+        Name: {{val.name}}
+    </div>
+    <div class="card-header">Niche: {{val.niche}}</div>
+    <div>
+       <p class="card-text"> Reach:{{val.reach}}</p>
+       <span>
+       <p class="card-text" style="color:gold">{{val.category}}</p>
+       <a class="card-text" :href="val.site"> visit site </a>
+       </span>
+       <button class='btn btn-warning' @click='req(val)'>Request </button>
+    </div>
+</div>
