@@ -12,6 +12,8 @@ const spons_profile={
     <h1> Welcome {{name}} </h1>
     <router-link to='/search'><button class='btn btn-link' >Search for Influencers </button></router-link>
     <table class='table-primary table-bordered'>
+
+    <button class='btn btn-danger' @click='exp()'> Export as a csv </button>
     <caption class="caption">Active Campaigns</caption>
     <tr>
         <th scope="col">C_id</th>
@@ -330,6 +332,14 @@ methods:{
         ad.Salary=ad.Negotiated
         ad.Status='Paid'
         const put_req=await fetch(this.url+'/api/ads',{method:'PUT',headers: {"Content-Type": "application/json","Authentication-Token": sessionStorage.getItem("token")},body: JSON.stringify(ad)})
+    },
+    async exp(){
+        const start_job=await fetch(this.url+'/csv')
+        if (start_job.ok){
+            let tj=await start_job.json()
+            let tid=tj.task_id
+            const csv_req= await fetch(this.url+'/fetc/'+tid)
+        }
     }
 },
 async mounted(){

@@ -35,9 +35,10 @@ def csv(em):
     q="select Title,Message,S_date,E_date,Budget,Niche from Campaigns where s_email='{}'".format(em)
     cur.execute(q)
     res=conv(cur.fetchall())
-    with open('camps.csv', 'w', newline='') as csvfile:
+    fname='./user-downloads/camps_'+em+'.csv'
+    with open(fname, 'w', newline='') as csvfile:
         fieldnames = ['title','message','s_date','e_date','budget','niche']
         writer = DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(res)
-    return 'camps.csv'
+    return fname

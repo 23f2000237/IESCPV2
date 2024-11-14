@@ -10,7 +10,6 @@ from flask_caching import Cache
 from worker import celery_init_app
 import flask_excel as excel
 celery_app=None
-
 def create_app():
     app=Flask(__name__)
     cache=Cache(app)
@@ -40,8 +39,7 @@ def create_app():
     app.config['CACHE_REDIS_PORT'] = 6379
     app.config['CACHE_REDIS_DB'] = 0
     app.config['CACHE_REDIS_URL'] = 'redis://localhost:6379/0'
-    
-    create_view(app,ud,cache)
+    create_view(app,ud)
     api.init_app(app)
     adpi.init_app(app)
     ipi.init_app(app)

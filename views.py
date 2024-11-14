@@ -1,11 +1,11 @@
-from flask import render_template,jsonify,request
+from flask import render_template,jsonify,request,send_file
 from flask_security.utils import hash_password
 from flask_security import login_required,roles_required,auth_required,current_user,roles_accepted,SQLAlchemyUserDatastore    
 import sqlite3
 from extn import db
 from tasks import csv
 from celery.result import AsyncResult
-conn=sqlite3.connect("instance/baknd.db",check_same_thread=False)
+conn=sqlite3.connect(r'instance/baknd.db',check_same_thread=False)
 cur=conn.cursor()
 
 def cor(l):
@@ -54,8 +54,7 @@ def inc(l):
     return r
 
 
-def create_view(app,ud:SQLAlchemyUserDatastore,cache):
-
+def create_view(app,ud:SQLAlchemyUserDatastore):
     @app.route('/')
     def home():
         return render_template('index.html')
@@ -128,7 +127,6 @@ def create_view(app,ud:SQLAlchemyUserDatastore,cache):
     @app.route('/inf/spons/<cid>',methods=['POST','GET'])
     @roles_required('Spons')
     @auth_required('token')
-    @cache.cached(timeout=100)
     def inf_spons(cid):
         q1="select Niche from Campaigns where C_id={}".format(cid)
         cur.execute(q1)
@@ -254,12 +252,15 @@ def create_view(app,ud:SQLAlchemyUserDatastore,cache):
             sp_max_budget=cor(cur.fetchall())#sponsor who gave the maximum budget
             return {"role":role,"inf_n":inf_n,"inf_s":inf_s,"cp_n":cp_n,"cp_s":cp_s,"sp_max_budget":sp_max_budget},200          
         return '200'
-    
-    @app.route('/csv/<em>')
-    def csv_out(em):
+
+    @app.route('/csv')
+    def csv_out():
+        em=current_user.email
         res= csv.delay(em)
-        return res.id
+        return {"task_id":res.id},200
     @app.route('/fetc/<id>')
     def fet_csv(id):
         res=AsyncResult(id)
-        return res.result
+        if res.ready():
+            return send_file(res.result)
+        return '200'
