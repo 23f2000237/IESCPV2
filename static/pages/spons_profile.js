@@ -335,11 +335,9 @@ methods:{
     },
     async exp(){
         const start_job=await fetch(this.url+'/csv')
-        if (start_job.ok){
-            let tj=await start_job.json()
-            let tid=tj.task_id
-            const csv_req= await fetch(this.url+'/fetc/'+tid)
-        }
+        let tj=await start_job.json()
+        let tid=tj.task_id
+        window.open(this.url+'/fetc/'+tid)
     }
 },
 async mounted(){

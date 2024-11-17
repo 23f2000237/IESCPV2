@@ -263,4 +263,3 @@ def create_view(app,ud:SQLAlchemyUserDatastore):
         res=AsyncResult(id)
         if res.ready():
             return send_file(res.result)
-        return '200'
