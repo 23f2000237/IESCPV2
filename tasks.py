@@ -4,6 +4,7 @@ from csv import DictWriter
 from models import Campaigns
 from flask_excel import make_response_from_query_sets as mrs,make_response_from_array as mra,make_response_from_records as mrr
 import sqlite3
+from mail import send_email
 conn=sqlite3.connect("instance/baknd.db",check_same_thread=False)
 cur=conn.cursor()
 
@@ -42,3 +43,8 @@ def csv(em):
         writer.writeheader()
         writer.writerows(res)
     return fname
+
+@shared_task(ignore_result=True)
+def remaind(user_email,title,text):
+    send_email(user_email,title,text)
+    return '200'

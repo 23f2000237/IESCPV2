@@ -8,7 +8,11 @@ from influencer import ipi
 from sponsor import spi
 from flask_caching import Cache
 from worker import celery_init_app
+from tasks import remaind
 import flask_excel as excel
+from celery import Celery
+from celery.schedules import crontab
+from mailing_function import mailing
 celery_app=None
 def create_app():
     app=Flask(__name__)
@@ -25,7 +29,7 @@ def create_app():
         db.create_all()
         create_data(ud)
         celery_app=celery_init_app(app)
-        cache.init_app(app)
+        
     app.config['WTF_CSRF_CHECK_DEFAULT']=False
     app.config["SECURITY_CSRF_PROTECH_MECHANISMS"]=[]
     app.config["SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS"]=True
@@ -46,7 +50,22 @@ def create_app():
     spi.init_app(app)
     return app
 
+
+
 if __name__=='__main__':
     app=create_app()
     app.run(debug=True)
     excel.init_excel(app)
+
+c_b=Celery()
+c_b.config_from_object("celeryconfig")
+c_b.set_default()
+@c_b.on_after_configure.connect
+def setup_periodic_tasks(sender, **kwargs):
+    #sending influencers email at 5:40 in the evening
+    r_inf,r_spons=mailing()
+    for i in r_inf:
+        sender.add_periodic_task(crontab(hour=20, minute=2),remaind.s(i[0],'Your Daily Notification from Connex',i[1]))
+    for i in r_spons:
+        sender.add_periodic_task(crontab(hour=20, minute=8,day_of_month=1),remaind.s(i[0],'Your Daily Notification from Connex',i[1]))
+    

@@ -53,7 +53,6 @@ def inc(l):
         r.append(d)
     return r
 
-
 def create_view(app,ud:SQLAlchemyUserDatastore):
     @app.route('/')
     def home():
@@ -263,3 +262,8 @@ def create_view(app,ud:SQLAlchemyUserDatastore):
         res=AsyncResult(id)
         if res.ready():
             return send_file(res.result)
+    @app.route('/mail')
+    def mail_user():
+        #this will mail user thier necessites.
+        
+        return '200'
