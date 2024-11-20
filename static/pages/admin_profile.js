@@ -21,8 +21,8 @@ template:`
              <button :class="[s.flag=='True'? 'btn-danger' :'btn-success']" @click="flag(s)"> <p v-if="s.flag=='True'">Flag</p> <p v-else> Unflag</p>    </button>
                </td>
                <td>
-               <div v-if="s[4]=='False'">
-               <div class='table-success'> <button @click="app(s[4])" class='btn-success'> Approve </button> </div>
+               <div v-if="s.Approval=='False'">
+               <div class='table-success'> <button @click="app(s)" class='btn-success'> Approve </button> </div>
                </div>
                <div v-else>
                <div class='table-success'>Approved </div>
@@ -146,7 +146,7 @@ data (){
                 method:"PUT",headers: {
                     "Content-Type": "application/json",
                     "Authentication-Token": sessionStorage.getItem("token")
-                  },body:JSON.stringify({"Approval":'True',"email":fl[1]})})
+                  },body:JSON.stringify({"Approval":'True',"email":bl.email})})
         },
         async flag_camp(fl){
             if (fl.flag=='True'){

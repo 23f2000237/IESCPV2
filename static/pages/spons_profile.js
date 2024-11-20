@@ -6,7 +6,7 @@ function inval_date(st){
 }
 
 const spons_profile={
-    template:`<div v-if="approval">
+    template:`<div v-if="approval=='True'">
     <div v-if="flag=='True'">
     
     <h1> Welcome {{name}} </h1>

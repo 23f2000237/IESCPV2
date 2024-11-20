@@ -118,9 +118,10 @@ class Sponsor(Resource):
                 conn.commit()
             cur.execute(q2)
             conn.commit()
-            cur.execute(q3)
-            conn.commit()
-            print(q3)
+            if args['Flag']:
+                cur.execute(q3)
+                conn.commit()
+                print(q3)
             return {"message":"updated flag and stuff succesfully"}
         return '200'
 

@@ -68,18 +68,22 @@ def create_view(app,ud:SQLAlchemyUserDatastore):
             cat=data['Cat']
             nic=data['Nic']
             reach=int(data['reach'])
+            site=data['site']
             act=True
-            q="insert into Influencer(email_id,Category,Niche,Reach,Balance) values('{email}','{cat}','{nic}',{reach},0)".format(email=email,cat=cat,nic=nic,reach=reach)
-        elif role=='Spons':
+            q="insert into Influencer(email,Category,Niche,Reach,Balance,site) values('{email}','{cat}','{nic}',{reach},0,'{site}')".format(email=email,cat=cat,nic=nic,reach=reach,site=site)
+            cur.execute(q)
+            conn.commit()
+        if role=='Spons':
             ind=data['Ind']
+            site=data['site']
             act=False
-            q="insert into Sponsor(email_id,Industry) values('{email}','{ind}')".format(email=email,ind=ind)
+            q="insert into Sponsor(email_id,Industry,site) values('{email}','{ind}','{site}')".format(email=email,ind=ind,site=site)
+            cur.execute(q)
+            conn.commit()
         if (email and passwd) and role:
             if not ud.find_user(email=email):
                     ud.create_user(name=name,email=email,password=hash_password(passwd),roles=[role],active=act)
                     db.session.commit()
-                    cur.execute(q)
-                    conn.commit()
             else:
                  return (jsonify({"message":"User_exists"}),200)
         else:

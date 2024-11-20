@@ -74,10 +74,16 @@ const signup={
           <div class="form-group mb-4">
           <input v-model="reach" type="text" class="form-control" placeholder="Reach" required/>
           </div>
+          <div class="form-group mb-4">
+          <input v-model="site" type="text" class="form-control" placeholder="site" required/>
+          </div>
           </div>
           <div v-if="role=='Spons'" class="form-group mb-4">
           <div class="form-group mb-4">
           <input v-model="Ind" type="text" class="form-control" placeholder="Industry" required/>
+          </div>
+          <div class="form-group mb-4">
+          <input v-model="site" type="text" class="form-control" placeholder="site" required/>
           </div>
           </div>
         <button class="btn btn-primary w-100" @click="register">Submit</button>
@@ -94,6 +100,7 @@ const signup={
         Nic:'',
         reach:'',
         Ind:'',
+        site:''
       }
     },
     methods:
@@ -107,7 +114,8 @@ const signup={
         Cat:this.Cat,
         Nic:this.Nic,
         reach:this.reach,
-        Ind:this.Ind}
+        Ind:this.Ind,
+      site:this.site}
       const req=await fetch(url+'/register',{
         method:'POST', 
         headers: {
