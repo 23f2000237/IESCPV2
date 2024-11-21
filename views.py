@@ -137,7 +137,7 @@ def create_view(app,ud:SQLAlchemyUserDatastore):
         if Nic=='public':
             q="select name,u.email from user u,Influencer i where i.email=u.email and Flag='True'"
         else:
-            q="select name,u.email from user u,Influencer i where i.email=u.email and (Flag='True' and Niche ={})".format(Nic)
+            q="select name,u.email from user u,Influencer i where i.email=u.email and (Flag='True' and Niche ='{}')".format(Nic)
         cur.execute(q)
         dt=cur.fetchall()
         l=[]
